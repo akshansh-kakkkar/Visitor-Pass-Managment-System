@@ -20,7 +20,9 @@ const VisitorSchema = new Schema({
     },
     photo : {
         type : String,
-        required : true,
+    },
+    purpose : {
+        type : String,
     }
 }, {timestamps : true})
 
