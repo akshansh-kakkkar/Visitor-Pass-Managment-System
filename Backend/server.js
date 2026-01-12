@@ -6,6 +6,8 @@ import cors from "cors"
 import ProtectedRoutes from './Routes/ProtectedRoutes.js'
 import AdminRoutes from './Routes/AdminRoutes.js'
 import VisitorRoutes from './Routes/VisitorRoutes.js'
+import AppointmentRoutes from './Routes/AppointmentRoutes.js'
+import PassRoutes from './Routes/PassRoutes.js'
 dotenv.config()
 const app = express()
 const Port = process.env.PORT || 3000
@@ -16,6 +18,10 @@ app.use('/api/auth', AuthRoute)
 app.use('/api/test', ProtectedRoutes)
 app.use('/api/register', AdminRoutes)
 app.use('/api/register', VisitorRoutes)
+app.use('/api/visitor', AppointmentRoutes)
+app.use('/api/visitor', PassRoutes)
+
+
 mongoose.connect(process.env.MONGO_URI).then(() => {
     console.log('mongodb database is connected')
 }).catch((err) => {
