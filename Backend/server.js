@@ -17,7 +17,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/auth', AuthRoute);
 app.use('/api/test', ProtectedRoutes);
-app.use('/api/register', AdminRoutes);
+app.use('/api/admin', AdminRoutes);
 app.use('/api/register', VisitorRoutes);
 app.use('/api/visitor', AppointmentRoutes);
 app.use('/api/visitor', PassRoutes);

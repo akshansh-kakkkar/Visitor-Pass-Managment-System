@@ -7,4 +7,5 @@ const router = express.Router();
 
 router.post('/handle-pass', Protection, restrictedTo('employee'), handleAppointment);
 
-export default router
+export default router;
+

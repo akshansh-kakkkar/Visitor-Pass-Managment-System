@@ -2,7 +2,10 @@ import Visitor from "../Models/VisitorModel.js";
 
 const RegisterVisitor = async (req, res) => {
     try {
-        const { name, phone, email, company, purpose } = req.body;
+        console.log('Body:', req.body);
+        console.log('File:', req.file);
+        
+        const { name, phone, email, company } = req.body;
         const photo = req.file ? req.file.path : null;
         if (!name || !phone || !email) {
             return res.status(400).json({
@@ -15,7 +18,6 @@ const RegisterVisitor = async (req, res) => {
             phone,
             email,
             company,
-            purpose,
             photo
         })
         res.status(201).json({
@@ -24,8 +26,7 @@ const RegisterVisitor = async (req, res) => {
                 email: visitor.email,
                 phone: visitor.phone,
                 company: visitor.company,
-                purpose: visitor.purpose,
-                photo : visitor.photo
+                photo: visitor.photo
             }
         })
     }
