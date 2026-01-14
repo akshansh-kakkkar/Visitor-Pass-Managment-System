@@ -4,7 +4,7 @@ const RegisterVisitor = async (req, res) => {
     try {
         console.log('Body:', req.body);
         console.log('File:', req.file);
-        
+
         const { name, phone, email, company } = req.body;
         const photo = req.file ? req.file.path : null;
         if (!name || !phone || !email) {
@@ -37,5 +37,16 @@ const RegisterVisitor = async (req, res) => {
     }
 }
 
-export default RegisterVisitor;
+const getAllVisitors = async (req, res) => {
+    try {
+        const visitors = await Visitor.find({}).sort({ createdAt: -1 });
+        res.status(200).json(visitors);
+    } catch (error) {
+        res.status(500).json({
+            message: "Something went wrong while fetching visitors",
+            error: error.message
+        });
+    }
+};
 
+export { RegisterVisitor, getAllVisitors };

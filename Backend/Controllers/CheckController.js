@@ -1,47 +1,59 @@
 import Pass from "../Models/PassModel.js";
 import CheckLog from "../Models/CheckLogModel.js";
 
-const scanQR =async (req,res)=>{
-    try{
-        const {qrData} =req.body;
+const scanQR = async (req, res) => {
+    try {
+        const { qrData } = req.body;
+        // Assuming QR format is "Pass-<ID>"
         const appointmentId = qrData.replace('Pass-', "")
-        const pass = Pass.findOne({appointment : appointmentId, isActive : true})
 
-        if(!pass){
+        // Find the pass using the ID
+        const pass = await Pass.findOne({ appointment: appointmentId, isActive: true });
+
+        if (!pass) {
             return res.status(400).json({
-                message : "Pass Invalid or Expired"
-            })
+                message: "Pass Invalid or Expired"
+            });
         }
 
-        const exisitngLog = await CheckLog.create({
-            Pass : pass._id,
-            checkOutTime : null
-        })
+        // Check if there is already an active log (checked in but not checked out)
+        const existingLog = await CheckLog.findOne({
+            pass: pass._id,
+            checkOutTime: null // Active session
+        });
 
-        if(!exisitngLog){
+        if (existingLog) {
+            // CHECK OUT LOGIC
+            existingLog.checkOutTime = new Date();
+            await existingLog.save();
+
+            // Deactivate pass upon exit
+            pass.isActive = false;
+            await pass.save();
+
+            return res.status(200).json({
+                message: "Visitor checked out successfully",
+                log: existingLog
+            });
+        } else {
+            // CHECK IN LOGIC
             const log = await CheckLog.create({
-                Pass : pass._id,
-                security : req.user.id,
-                checkInTime : new Date()
-            })
-        }
-        res.status(201).json({
-           message :  "visitor checked in",
-           log
-        })
+                pass: pass._id,
+                security: req.user.id,
+                checkInTime: new Date(),
+                checkOutTime: null
+            });
 
-        exisitngLog.checkOutTime = new Date();
-        await exisitngLog.save();
-        pass.isActive = false ;
-        await pass.save();
-        res.status(201).json({
-            message : "visitor checked out"
-        })
-    }
-    catch(error){
+            return res.status(201).json({
+                message: "Visitor checked in successfully",
+                log
+            });
+        }
+    } catch (error) {
+        console.error(error);
         res.status(500).json({
-            message : error.message,
-        })
+            message: error.message,
+        });
     }
 }
 

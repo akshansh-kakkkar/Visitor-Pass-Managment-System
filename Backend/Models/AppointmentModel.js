@@ -25,7 +25,7 @@ const ApppointmentSchema = new Schema({
         type: String,
     },
     status: {
-        enum: ['pending', 'aprooved', 'rejected'],
+        enum: ['pending', 'approved', 'rejected'],
         default: 'pending',
         type: String,
     },

@@ -1,56 +1,73 @@
 import Appointment from "../Models/AppointmentModel.js";
-import QRCode from 'qrcode'
+import Visitor from "../Models/VisitorModel.js";
 import Pass from "../Models/PassModel.js";
+import QRCode from "qrcode";
+import fs from "fs";
 import generatePdf from "../Utils/Pdf_generator.js";
 import { sendPassEmail } from "../Utils/Email.js";
-import fs from 'fs'
-import Visitor from "../Models/VisitorModel.js";
 
-const handleAppointment = async (req,res)=>{
-    try{
-        const {appointmentId, action} = req.body;
+const handleAppointment = async (req, res) => {
+    try {
+        const { appointmentId, action } = req.body;
 
         const appointment = await Appointment.findById(appointmentId);
 
-        if(!appointment){
+        if (!appointment) {
             return res.status(400).json({
-                message : "No Appointment found"
+                message: "No Appointment found"
             });
         }
-        if(appointment.status !== 'pending'){
+        if (appointment.status !== 'pending') {
             return res.status(400).json({
-                message : "Appointment already processsed"
+                message: "Appointment already processsed"
             })
         }
-        if(action === 'rejected'){
+
+ 
+        const visitorId = appointment.visitor._id || appointment.visitor;
+
+        if (action === 'reject') {
             appointment.status = 'rejected';
             await appointment.save()
             return res.status(201).json({
-                message : "Sorry your appointment has been rejected please contact the admin of the organization if you have any other queries",
-                
+                message: "Sorry your appointment has been rejected please contact the admin of the organization if you have any other queries",
+
             })
         }
-        if(action === 'aprooved'){
-            appointment.status = 'aprooved';
+        if (action === 'approve') { 
+            appointment.status = 'approved';
             await appointment.save()
-            
-            // Generate QR code and pass
+
+
             const qrData = `Pass-${appointment._id}`;
             const qrCode = await QRCode.toDataURL(qrData);
-            const visitor = await Visitor.findById(appointment.visitor);
+            const visitor = await Visitor.findById(visitorId);
+            if (!visitor) {
+                return res.status(404).json({ message: "Visitor not found" });
+            }
+
             const qrPath = `uploads/${appointment._id}.png`;
+
+      
+            if (!fs.existsSync('uploads')) {
+                fs.mkdirSync('uploads');
+            }
 
             await QRCode.toFile(qrPath, qrData);
 
             const PdfPath = await generatePdf(visitor, appointment, qrPath);
 
-            // Send email with pass
-            if(visitor.email){
-                await sendPassEmail(visitor.email, PdfPath)
+            // Send email only if credentials are configured
+            if (visitor.email && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+                try {
+                    await sendPassEmail(visitor.email, PdfPath);
+                } catch (emailErr) {
+                    console.log("Email sending failed (credentials may not be configured):", emailErr.message);
+                }
             }
 
             const pass = await Pass.create({
-                visitor: appointment.visitor,
+                visitor: visitorId,
                 appointment: appointment._id,
                 qrCode,
                 validFrom: new Date(),
@@ -62,17 +79,18 @@ const handleAppointment = async (req,res)=>{
                 pass
             })
         }
-        
+
         return res.status(400).json({
-            message: "Invalid action. Use 'aprooved' or 'rejected'"
+            message: "Invalid action. Use 'approve' or 'reject'"
         })
 
-    }    
-    catch(error){
+    }
+    catch (error) {
+        console.error("Handle Appointment Error:", error);
         res.status(500).json({
-            message : error.message
+            message: error.message
         })
-    }   
+    }
 }
 
 export default handleAppointment
