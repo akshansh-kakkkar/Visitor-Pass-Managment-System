@@ -1,0 +1,51 @@
+import { useState } from "react"
+import { HashLink } from "react-router-hash-link"
+import { useLocation } from "react-router-dom"
+
+const Navbar = () => {
+  const [open, setOpen] = useState(false)
+  const location = useLocation()
+
+  const navitem = (hash) =>
+    `block bg-[#1e1e1e] p-3 px-5 text-md rounded-3xl font-semibold
+     ${location.hash === hash
+      ? "bg-gradient-to-r from-[#6a42d7] to-[#402b78] shadow-lg"
+      : "text-white hover:bg-[#2a2a2a]"
+    }`
+
+  return (
+    <nav className="sticky top-0 z-50 bg-[#141414] text-white p-4 rounded-b-sm">
+      <div className="flex justify-between items-center">
+        <div className="text-2xl font-bold drop-shadow-[0_0_1px_#ffffff]">
+          PASSIFY
+        </div>
+
+        <button
+          onClick={() => setOpen(!open)}
+          className="sm:hidden text-3xl"
+        >
+          ☰
+        </button>
+
+        <ul className="hidden sm:flex gap-5">
+          <HashLink smooth to="/#" className={navitem("#")}>HOME</HashLink>
+          <HashLink smooth to="/#about" className={navitem("#about")}>ABOUT</HashLink>
+          <HashLink smooth to="/#reviews" className={navitem("#reviews")}>REVIEWS</HashLink>
+          <HashLink smooth to="/#contact" className={navitem("#contact")}>CONTACT</HashLink>
+        </ul>
+      </div>
+
+
+      {open && (
+        <ul className="sm:hidden mt-4 flex flex-col gap-3 bg-[#1e1e1e] p-4 rounded-xl">
+          <HashLink smooth to="/#" onClick={() => setOpen(false)} className={navitem("#")}>HOME</HashLink>
+          <HashLink smooth to="/#about" onClick={() => setOpen(false)} className={navitem("#about")}>ABOUT</HashLink>
+          <HashLink smooth to="/#reviews" onClick={() => setOpen(false)} className={navitem("#reviews")}>REVIEWS</HashLink>
+          <HashLink smooth to="/#contact" onClick={() => setOpen(false)} className={navitem("#contact")}>CONTACT</HashLink>
+        </ul>
+      )}
+    </nav>
+  )
+}
+
+export default Navbar

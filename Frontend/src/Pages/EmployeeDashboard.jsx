@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import api from '../api/api'
+import LogoutButton from '../Components/logoutButton';
 
 const EmployeeDashboard = () => {
   const [visitors, setVisitors] = useState([]);
@@ -26,7 +27,6 @@ const EmployeeDashboard = () => {
     load()
   }, [])
 
-  // Filter out visitors who already have appointments
   const availableVisitors = Array.isArray(visitors) ? visitors.filter(v => {
     return !appointments.some(a => a.visitor?._id === v._id);
   }) : [];
@@ -57,6 +57,7 @@ const EmployeeDashboard = () => {
 
   return (
     <div>
+      <LogoutButton/>
       <h2>Create Appointment</h2>
       <form onSubmit={create}>
         <select value={form.visitorId} onChange={(e) => setform({ ...form, visitorId: e.target.value })}>
