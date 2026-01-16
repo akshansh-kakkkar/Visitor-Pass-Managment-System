@@ -4,7 +4,6 @@ import fs from 'fs';
 const PdfGenerator = (visitor, appointment, qrCodePath) => {
     return new Promise((resolve, reject) => {
         try {
-            // Create passes folder if it doesn't exist
             if (!fs.existsSync('passes')) {
                 fs.mkdirSync('passes');
             }

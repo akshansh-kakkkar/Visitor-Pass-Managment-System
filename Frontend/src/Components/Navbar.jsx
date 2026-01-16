@@ -5,10 +5,10 @@ import { useLocation } from "react-router-dom"
 const Navbar = () => {
   const [open, setOpen] = useState(false)
   const location = useLocation()
-
   const navitem = (hash) =>
     `block bg-[#1e1e1e] p-3 px-5 text-md rounded-3xl font-semibold
-     ${location.hash === hash
+   ${(hash === "#" && location.hash === "") ||
+      location.hash === hash
       ? "bg-gradient-to-r from-[#6a42d7] to-[#402b78] shadow-lg"
       : "text-white hover:bg-[#2a2a2a]"
     }`
