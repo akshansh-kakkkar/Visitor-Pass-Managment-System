@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { HashLink } from "react-router-hash-link"
 import { useLocation } from "react-router-dom"
-
+import { Outlet } from "react-router-dom"
 const Navbar = () => {
   const [open, setOpen] = useState(false)
   const location = useLocation()
@@ -14,37 +14,40 @@ const Navbar = () => {
     }`
 
   return (
-    <nav className="sticky top-0 z-50 bg-[#141414] text-white p-4 rounded-b-sm">
-      <div className="flex justify-between items-center">
-        <div className="text-2xl font-bold drop-shadow-[0_0_1px_#ffffff]">
-          PASSIFY
+    <>
+      <nav className="sticky top-0 z-50 bg-black/60 backdrop-blur-xl border-b border-white/5 text-white p-4 transition-all duration-300">
+        <div className="flex justify-between items-center">
+          <div className="text-2xl font-bold drop-shadow-[0_0_1px_#ffffff]">
+            PASSIFY
+          </div>
+
+          <button
+            onClick={() => setOpen(!open)}
+            className="sm:hidden text-3xl"
+          >
+            ☰
+          </button>
+
+          <ul className="hidden sm:flex gap-5">
+            <HashLink smooth to="/#" className={navitem("#")}>HOME</HashLink>
+            <HashLink smooth to="/#about" className={navitem("#about")}>ABOUT</HashLink>
+            <HashLink smooth to="/#reviews" className={navitem("#reviews")}>REVIEWS</HashLink>
+            <HashLink smooth to="/#contact" className={navitem("#contact")}>CONTACT</HashLink>
+          </ul>
         </div>
 
-        <button
-          onClick={() => setOpen(!open)}
-          className="sm:hidden text-3xl"
-        >
-          ☰
-        </button>
 
-        <ul className="hidden sm:flex gap-5">
-          <HashLink smooth to="/#" className={navitem("#")}>HOME</HashLink>
-          <HashLink smooth to="/#about" className={navitem("#about")}>ABOUT</HashLink>
-          <HashLink smooth to="/#reviews" className={navitem("#reviews")}>REVIEWS</HashLink>
-          <HashLink smooth to="/#contact" className={navitem("#contact")}>CONTACT</HashLink>
-        </ul>
-      </div>
-
-
-      {open && (
-        <ul className="sm:hidden mt-4 flex flex-col gap-3 bg-[#1e1e1e] p-4 rounded-xl">
-          <HashLink smooth to="/#" onClick={() => setOpen(false)} className={navitem("#")}>HOME</HashLink>
-          <HashLink smooth to="/#about" onClick={() => setOpen(false)} className={navitem("#about")}>ABOUT</HashLink>
-          <HashLink smooth to="/#reviews" onClick={() => setOpen(false)} className={navitem("#reviews")}>REVIEWS</HashLink>
-          <HashLink smooth to="/#contact" onClick={() => setOpen(false)} className={navitem("#contact")}>CONTACT</HashLink>
-        </ul>
-      )}
-    </nav>
+        {open && (
+          <ul className="sm:hidden mt-4 flex flex-col gap-3 bg-[#1e1e1e] p-4 rounded-xl">
+            <HashLink smooth to="/#" onClick={() => setOpen(false)} className={navitem("#")}>HOME</HashLink>
+            <HashLink smooth to="/#about" onClick={() => setOpen(false)} className={navitem("#about")}>ABOUT</HashLink>
+            <HashLink smooth to="/#reviews" onClick={() => setOpen(false)} className={navitem("#reviews")}>REVIEWS</HashLink>
+            <HashLink smooth to="/#contact" onClick={() => setOpen(false)} className={navitem("#contact")}>CONTACT</HashLink>
+          </ul>
+        )}
+      </nav>
+      <Outlet />
+    </>
   )
 }
 

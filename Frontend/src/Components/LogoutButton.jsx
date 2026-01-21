@@ -2,15 +2,15 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const LogoutButton = () => {
-    const Navigate = useNavigate();
-    const logout = ()=>{
-        localStorage.removeItem('token');
-        localStorage.removeItem('role');
+  const Navigate = useNavigate();
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
 
-        Navigate('/')
-    }
+    Navigate('/')
+  }
   return (
-    <button onClick={logout}>Login</button>
+    <button onClick={logout}>Logout</button>
   )
 }
 
