@@ -9,6 +9,7 @@ import VisitorRoutes from './Routes/VisitorRoutes.js'
 import AppointmentRoutes from './Routes/AppointmentRoutes.js'
 import PassRoutes from './Routes/PassRoutes.js'
 import CheckLog from './Routes/CheckLogRoutes.js'
+import ViewPass from './Routes/ViewPassRoutes.js'
 dotenv.config()
 const app = express()
 const Port = process.env.PORT || 3000
@@ -18,12 +19,11 @@ app.use(express.json());
 app.use('/api/auth', AuthRoute);
 app.use('/api/test', ProtectedRoutes);
 app.use('/api/admin', AdminRoutes);
-app.use('/api/register', VisitorRoutes);
+app.use('/api/visitor', VisitorRoutes);
 app.use('/api/visitor', AppointmentRoutes);
 app.use('/api/visitor', PassRoutes);
 app.use('/api/security', CheckLog);
-
-
+app.use('/visitor', ViewPass)
 
 
 mongoose.connect(process.env.MONGO_URI).then(() => {

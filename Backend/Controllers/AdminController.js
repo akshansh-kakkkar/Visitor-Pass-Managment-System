@@ -1,5 +1,5 @@
 import User from "../Models/UserModel.js";
-import Visitor from "../Models/VisitorModel.js";
+import Visitor from "../Models/VisitorUser.js";
 import CheckLog from '../Models/CheckLogModel.js'
 
 export const CreateStaff = async (req, res) => {
@@ -44,20 +44,75 @@ export const CreateStaff = async (req, res) => {
 };
 
 
-export const getAllVisitors = async(req,res)=>{
-    const visitor = (await Visitor.find()).sort({createdAt : -1});
-    res.status(200).json({
-        visitor
-    });
+export const getAllVisitors = async (req, res) => {
+    try {
+        const visitor = await Visitor.find().sort({ createdAt: -1 });
+        res.status(200).json({
+            visitor
+        });
+    } catch (error) {
+        console.error("Error in getAllVisitors:", error);
+        res.status(500).json({
+            message: error.message
+        });
+    }
 };
 
-export const getAllactiveVisitors = async (req,res)=>{
-    const active = await CheckLog.find({checkOutTime : null}).populate('pass').populate('security');
-    res.status(200).json(active);
+export const getAllactiveVisitors = async (req, res) => {
+    try {
+        const active = await CheckLog.find({ checkOutTime: null }).populate('pass').populate('security');
+        res.status(200).json(active);
+    } catch (error) {
+        console.error("Error in getAllactiveVisitors:", error);
+        res.status(500).json({
+            message: error.message
+        });
+    }
 };
 
-export const getVisitorHistory = async (req, res)=>{
-    const history = (await CheckLog.find().populate('pass').populate('security')).toSorted({createdAt : -1});
-    res.status(200).json(history)
+export const getVisitorHistory = async (req, res) => {
+    try {
+        const history = await CheckLog.find().populate('pass').populate('security').sort({ createdAt: -1 });
+        res.status(200).json(history)
+    } catch (error) {
+        console.error("Error in getVisitorHistory:", error);
+        res.status(500).json({
+            message: error.message
+        });
+    }
 };
 
+export const getAllEmployees = async (req, res) => {
+    try {
+        const employees = await User.find({ role: { $in: ['employee', 'security'] } }).select('name email role department isActive _id');
+        res.status(200).json(employees);
+    } catch (error) {
+        res.status(500).json({
+            message: "Error fetching employees",
+            error: error.message
+        });
+    }
+};
+
+export const toggleStaff = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user || !['employee', 'security'].includes(user.role)) {
+            return res.status(404).json({
+                message: `staff not found`
+            })
+        }
+
+        user.isActive = !user.isActive;
+        await user.save()
+        res.json({
+            message: `User ${user.isActive ? "enabled" : "disabled"}`,
+            isActive: user.isActive
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'error',
+            error: error.message
+        })
+    }
+}

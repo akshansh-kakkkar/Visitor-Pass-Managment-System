@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
-const ApppointmentSchema = new Schema({
+const AppointmentSchema = new Schema({
     visitor: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Visitor',
+        ref: 'VisitorUser',
         required: true,
     },
     host: {
@@ -35,4 +35,4 @@ const ApppointmentSchema = new Schema({
 );
 
 
-export default mongoose.model('Apppointment', ApppointmentSchema);
+export default mongoose.model('Appointment', AppointmentSchema);

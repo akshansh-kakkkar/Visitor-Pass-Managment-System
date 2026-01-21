@@ -27,7 +27,11 @@ const UserSchema = new Schema ({
         type : String,
         required : true,
     },
-    department : String
+    department : String,
+    isActive : {
+        type : Boolean,
+        default : true
+    }
 }, {timestamps : true})
 
 

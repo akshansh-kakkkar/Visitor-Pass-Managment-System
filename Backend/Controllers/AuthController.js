@@ -15,21 +15,21 @@ const LoginUser = async (req, res) => {
                 password: user.password,
                 role: user.role,
                 department: user.department,
-                token: GenerateToken(user.id, user.role)
+                token: GenerateToken(user._id, user.role)
             })
         }
-        else{
+        else {
             res.status(400).json({
-                message : "Invalid Credentials"
+                message: "Invalid Credentials"
             })
         }
     }
-    catch(error) {
+    catch (error) {
         res.status(500).json({
-            message : error.message
+            message: error.message
         })
     }
 
 }
 
-export {LoginUser};
+export { LoginUser };

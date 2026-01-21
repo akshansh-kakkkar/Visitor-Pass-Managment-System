@@ -5,6 +5,6 @@ import { Protection, restrictedTo } from '../Middleware/Protect.js';
 const router = express.Router();
 
 
-router.post('/create-appointment', Protection, restrictedTo('employee'), createAppointment);
-router.get('/my-appointments', Protection, restrictedTo('employee'), getAllAppointments )
+router.post('/create-appointment', Protection, restrictedTo('visitor'), createAppointment);
+router.get('/my-appointments', Protection, restrictedTo('visitor', 'employee'), getAllAppointments )
 export default router;

@@ -1,44 +1,45 @@
-import Visitor from "../Models/VisitorModel.js";
+import Visitor from "../Models/VisitorUser.js";
 import Appointment from "../Models/AppointmentModel.js";
 
 
 export const createAppointment = async (req, res) => {
     try {
-        const { visitorId, date, time, purpose } = req.body;
-
-        const visitor = await Visitor.findById(visitorId);
-
-        if (!visitor) {
-            return res.status(404).json({
-                message: "No such visitor found"
-            })
-        }
+        const { hostId, date, time, purpose } = req.body;
 
         const appointment = await Appointment.create({
-            visitor: visitorId,
-            host: req.user.id,
+            visitor: req.user._id,
+            host: hostId,
             date,
             time,
-            purpose
-        });
-        res.status(201).json({
-            appointment,
-            message: "Appointment created successfully"
+            purpose,
+            status: "pending"
         })
+        res.status(201).json(appointment)
     }
-    catch (error) {
+    catch (err) {
         res.status(500).json({
-            message: error.messsage
+            message: err.message,
+
         })
     }
 }
 
 export const getAllAppointments = async (req, res) => {
     try {
-        console.log('Getting appointments for user:', req.user.id);
-        const appointments = await Appointment.find({ host: req.user.id })
-            .populate('visitor').sort({ createdAt: -1 });
-        console.log('Found appointments:', appointments.length);
+        let query = {};
+        if (req.user.role === 'visitor') {
+            query = { visitor: req.user._id };
+        } else if (req.user.role === 'employee') {
+            query = { host: req.user._id };
+        } else {
+            return res.status(403).json({ message: "Access denied" });
+        }
+
+        const appointments = await Appointment.find(query)
+            .populate('visitor')
+            .populate('host')
+            .sort({ createdAt: -1 });
+
         res.status(200).json(appointments)
     } catch (error) {
         console.error('Error in getAllAppointments:', error);

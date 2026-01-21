@@ -1,5 +1,5 @@
 import Appointment from "../Models/AppointmentModel.js";
-import Visitor from "../Models/VisitorModel.js";
+import Visitor from "../Models/VisitorUser.js";
 import Pass from "../Models/PassModel.js";
 import QRCode from "qrcode";
 import fs from "fs";
@@ -23,7 +23,7 @@ const handleAppointment = async (req, res) => {
             })
         }
 
- 
+
         const visitorId = appointment.visitor._id || appointment.visitor;
 
         if (action === 'reject') {
@@ -34,7 +34,7 @@ const handleAppointment = async (req, res) => {
 
             })
         }
-        if (action === 'approve') { 
+        if (action === 'approve') {
             appointment.status = 'approved';
             await appointment.save()
 
@@ -48,7 +48,7 @@ const handleAppointment = async (req, res) => {
 
             const qrPath = `uploads/${appointment._id}.png`;
 
-      
+
             if (!fs.existsSync('uploads')) {
                 fs.mkdirSync('uploads');
             }
@@ -70,6 +70,7 @@ const handleAppointment = async (req, res) => {
                 visitor: visitorId,
                 appointment: appointment._id,
                 qrCode,
+                pdfPath: PdfPath,
                 validFrom: new Date(),
                 validTill: new Date(Date.now() + 8 * 60 * 60 * 1000)
             })
