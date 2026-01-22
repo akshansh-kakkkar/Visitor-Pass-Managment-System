@@ -1,7 +1,6 @@
 import axios from 'axios';
-
 const api = axios.create({
-    baseURL: 'https://visitor-pass-managment-system.onrender.com'
+    baseURL: import.meta.env.VITE_BACKEND_URL
 });
 
 api.interceptors.request.use((config) => {
