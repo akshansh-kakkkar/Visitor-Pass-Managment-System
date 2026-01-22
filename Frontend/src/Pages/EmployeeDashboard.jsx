@@ -88,7 +88,6 @@ const EmployeeDashboard = () => {
               <div className="justify-center flex items-center content-center text-center mb-10 overflow-hidden">
                 <div key={a._id} className="relative z-10 w-full max-w-[600px] items-center rounded-2xl p-8 border-t-5 border-t-purple-900 flex flex-col bg-white/5 border-white/10 border-2 shadow-[-0_25px_60px_rgba(0,0,0,0.85)] gap-6 backdrop-blur-2xl transition-all hover:scale-[1.01]">
 
-                  {/* Visitor Info Header */}
                   <div className="w-full flex flex-col items-center gap-4">
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-2xl shadow-lg">
                       {(a.visitor?.name || 'V')[0].toUpperCase()}
@@ -101,19 +100,19 @@ const EmployeeDashboard = () => {
                     </div>
                   </div>
 
-                  {/* Purpose Section */}
+                 
                   <div className="w-full px-6 py-4 rounded-xl bg-white/5 border border-white/10 text-xl font-medium">
                     <p className="text-[10px] font-bold text-purple-400 uppercase tracking-widest mb-1">Purpose of Visit</p>
                     {a.purpose || 'N/A'}
                   </div>
 
-                  {/* Date & Time Section */}
+                
                   <div className="w-full px-6 py-4 rounded-xl bg-white/5 border border-white/10 text-xl">
                     <p className="text-[10px] font-bold text-purple-400 uppercase tracking-widest mb-1">Scheduled For</p>
                     <span className="font-bold">{a.date}</span> at <span className="font-bold">{a.time}</span>
                   </div>
 
-                  {/* Status Badge */}
+              
                   <div className="w-full px-6 py-4 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center">
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Current Status</p>
                     <span className={`text-xl font-bold px-4 py-1 rounded-lg uppercase tracking-wider ${a.status === 'approved' ? 'text-green-400' :
@@ -123,8 +122,6 @@ const EmployeeDashboard = () => {
                       {a.status}
                     </span>
                   </div>
-
-                  {/* Actions Section */}
                   {a.status === "pending" && (
                     <div className="flex gap-4 w-full pt-4">
                       <button
@@ -159,7 +156,6 @@ const EmployeeDashboard = () => {
         </div>
       </div>
 
-      {/* Footer background decoration */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full h-[300px] bg-purple-900/10 blur-[120px] rounded-full pointer-events-none"></div>
     </>
   )

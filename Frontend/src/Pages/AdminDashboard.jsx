@@ -174,7 +174,6 @@ const AdminDashboard = () => {
           </form>
         </div>
 
-        {/* Organization Staff Section */}
         <div className="mt-20">
           <h2 className="justify-center flex items-center text-white font-bold text-3xl mb-8">Organization Staff</h2>
           <div className="max-w-7xl mx-auto px-4">
@@ -230,7 +229,7 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Registered Visitors Section */}
+
         <div className="mt-20">
           <h2 className="justify-center flex items-center text-white font-bold text-3xl mb-8">Registered Visitors</h2>
           <div className="max-w-7xl mx-auto px-4 pb-20">
@@ -260,7 +259,7 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
-      {/* Background glow for the bottom */}
+
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full h-[300px] bg-purple-900/10 blur-[120px] rounded-full pointer-events-none"></div>
     </>
   )
