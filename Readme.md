@@ -25,16 +25,16 @@ A modern Pass Management System for security managment
 
 ---
 
-## TechStack
+# TechStack
 
-# React.js
-# Express.js
-# MongoDB
-# Node.js
+## React.js
+## Express.js
+## MongoDB
+## Node.js
 
-## Axios to connect backend with frontend 
+# Axios to connect backend with frontend 
 
 ## Credits
-# LordIcon
+## LordIcon
 ## Experience Link
-https://visitor-pass-managment-system.vercel.app/
+### https://visitor-pass-managment-system.vercel.app/
