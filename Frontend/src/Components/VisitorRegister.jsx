@@ -5,8 +5,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import BgGlow from './BgGlow';
 import eyeIcon from '../assets/eye.svg'
 import eyeSlashIcon from '../assets/eye-slash.svg'
-import nameIcon from '../assets/name.svg'
-import profileIcon from '../assets/profile.svg'
 
 const VisitorRegister = () => {
     const [name, setName] = useState('');
@@ -45,12 +43,12 @@ const VisitorRegister = () => {
                     <label htmlFor="name" className='flex -translate-x-25 sm:-translate-x-37 translate-y-4'>Name</label>
                     <div className="relative w-full">
                         <input type="text" placeholder='John Doe' required onChange={(e) => { setName(e.target.value) }} className="w-full px-4 pr-12 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/40 outline-none focus:border-purple-500/60 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition" />
-                        <img src={nameIcon} className=' absolute right-4 top-1/2 -translate-y-1/2 w-6 opacity-60 cursor-pointer hover:opacity-100 transition' alt="profile-icon" />
+                        <img src="/assets/name.svg" className=' absolute right-4 top-1/2 -translate-y-1/2 w-6 opacity-60 cursor-pointer hover:opacity-100 transition' alt="profile-icon" />
                     </div>
                     <label htmlFor="email" className='flex -translate-x-25 sm:-translate-x-37 translate-y-4'>Email</label>
                     <div className="relative w-full">
                         <input type="email" placeholder='name@gmail.com' required onChange={(e) => { setEmail(e.target.value) }} className="w-full px-4 pr-12 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/40 outline-none focus:border-purple-500/60 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition" />
-                        <img src={profileIcon} className=' absolute right-4 top-1/2 -translate-y-1/2 w-5 opacity-60 cursor-pointer hover:opacity-100 transition' alt="profile icon" />
+                        <img src="/assets/profile.svg" className=' absolute right-4 top-1/2 -translate-y-1/2 w-5 opacity-60 cursor-pointer hover:opacity-100 transition' alt="profile icon" />
                     </div>
                     <label htmlFor="password" className='flex -translate-x-20  sm:-translate-x-33 translate-y-4'>Password</label>
                     <div className="relative w-full">
