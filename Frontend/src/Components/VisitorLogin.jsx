@@ -2,9 +2,9 @@ import { useState } from "react";
 import api from "../api/api";
 import { useNavigate, Link } from "react-router-dom";
 import BgGlow from "./BgGlow";
-import eyeIcon from '../../assets/eye.svg'
-import eyeSlashIcon from '../../assets/eye-slash.svg'
-import profileIcon from '../../assets/profile.svg'
+import eyeIcon from '../assets/eye.svg'
+import eyeSlashIcon from '../assets/eye-slash.svg'
+import profileIcon from '../assets/profile.svg'
 
 const VisitorLogin = () => {
   const [email, setEmail] = useState("");
