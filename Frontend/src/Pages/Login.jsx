@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import BgGlow from '../Components/BgGlow';
 import eyeIcon from '../../assets/eye.svg'
 import eyeSlashIcon from '../../assets/eye-slash.svg'
+import profileIcon from '../../assets/profile.svg'
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -55,7 +56,7 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <img src="/assets/profile.svg" className=' absolute right-4 top-1/2 -translate-y-1/2 w-5 opacity-60 cursor-pointer hover:opacity-100 transition' alt="profile-icon" />
+            <img src={profileIcon} className=' absolute right-4 top-1/2 -translate-y-1/2 w-5 opacity-60 cursor-pointer hover:opacity-100 transition' alt="profile-icon" />
           </div>
           <label htmlFor="password" className='flex -translate-x-25  sm:-translate-x-33 translate-y-4'>Password</label>
           <div className="relative w-full">
