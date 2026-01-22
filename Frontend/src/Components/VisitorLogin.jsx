@@ -1,9 +1,11 @@
 import { useState } from "react";
 import api from "../api/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import BgGlow from "./BgGlow";
 import eyeIcon from '../../assets/eye.svg'
 import eyeSlashIcon from '../../assets/eye-slash.svg'
+import profileIcon from '../../assets/profile.svg'
+
 const VisitorLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,7 +39,7 @@ const VisitorLogin = () => {
         <div className='font-bold justify-center p-5 rounded-2xl px-8 text-4xl  bg-gradient-to-r from-purple-500 to-indigo-500 hover:shadow-[0_2px_45px_rgba(139,92,246,0.8)] transition-all'>
           <h1>P</h1>
         </div>
-        <h1 className='text-center text-2xl font-bold font-semiboldbg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparen'>Welcome Back</h1>
+        <h1 className='text-center text-2xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent'>Welcome Back</h1>
         <p className='text-sm text-gray-400'>Enter your credentials to access PASSIFY</p>
 
         <label htmlFor="email" className='flex -translate-x-37 translate-y-4'>Email</label>
@@ -48,7 +50,7 @@ const VisitorLogin = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <img src="/assets/profile.svg" className=' absolute right-4 top-1/2 -translate-y-1/2 w-5 opacity-60 cursor-pointer hover:opacity-100 transition' alt="profile-icon" />
+          <img src={profileIcon} className=' absolute right-4 top-1/2 -translate-y-1/2 w-5 opacity-60 cursor-pointer hover:opacity-100 transition' alt="profile-icon" />
         </div>
         <label htmlFor="password" className="flex -translate-x-34 translate-y-4 ">Password</label>
         <div className="relative w-full">
@@ -69,10 +71,11 @@ const VisitorLogin = () => {
         </div>
         <button type='submit' className='mt-4 w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-[0_12px_30px_rgba(139,92,246,0.6)] hover:scale-[1.03] hover:shadow-[0_18px_45px_rgba(139,92,246,0.8)] transition-all'>LOGIN</button>
         <div className='w-80 h-[0.3px] mt-7 bg-gray-800 rounded-full'></div>
-        <p className='text-sm text-gray-400 font-bold'>Dont have an account?   <span className='text-purple-600 font-semibold hover:underline'><a href="/visitor-register">click here</a></span> </p>
+        <p className='text-sm text-gray-400 font-bold'>Dont have an account?   <span className='text-purple-600 font-semibold hover:underline'><Link to="/visitor-register">click here</Link></span> </p>
         {error && <p className="text-red-400 text-sm text-center mt-3 relative z-10">{error}</p>}
       </form>
     </div>
+
   );
 };
 
