@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import api from '../api/api.js'
+import LogoutButton from '../Components/LogoutButton';
+import BgGlow2 from '../Components/BgGlow2';
 
 const AdminDashboard = () => {
   const [error, seterror] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -13,18 +17,37 @@ const AdminDashboard = () => {
   })
   const [staff, setStaff] = useState([])
   const [visitors, setVisitors] = useState([])
+
+  const loadData = async () => {
+    setLoading(true)
+    try {
+      const t = Date.now();
+      const [sRes, vRes] = await Promise.all([
+        api.get(`/api/admin/employees?t=${t}`),
+        api.get(`/api/admin/all-visitors?t=${t}`)
+      ]);
+      setStaff(sRes.data);
+      setVisitors(vRes.data.visitor || []);
+    } catch (error) {
+      seterror(error.response?.data?.message || "Failed to fetch data")
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
-    ShowStaff();
-    showVisitor();
+    loadData();
   }, [])
+
   const toggle = async (id) => {
     try {
       await api.patch(`/api/admin/toggle-staff/${id}`);
-      ShowStaff();
+      await loadData();
     } catch (error) {
       alert(error.response?.data?.message || "Failed to toggle status");
     }
   };
+
   const createUser = async (e) => {
     e.preventDefault();
     try {
@@ -38,120 +61,208 @@ const AdminDashboard = () => {
         phone: "",
         department: ""
       })
-      ShowStaff();
+      await loadData();
     } catch (error) {
       alert(error.response?.data?.message || "Error creating user")
     }
   }
 
-  const ShowStaff = async () => {
-    try {
-      const s = await api.get('/api/admin/employees');
-      setStaff(s.data)
-    }
-    catch (error) {
-      seterror(error.response?.data?.message || "Failed Fetching Staff")
-    }
-  }
-  const showVisitor = async () => {
-    try {
-      const v = await api.get('/api/admin/all-visitors')
-      // The backend returns { visitor: [...] }, so we need to set v.data.visitor
-      setVisitors(v.data.visitor || [])
-    }
-    catch (error) {
-      seterror(error.response?.data?.message || 'Failed to fetch visitors')
-    }
-  }
-
-
   return (
-    <div style={{ padding: '20px' }}>
-      <h3>Admin Dashboard</h3>
-      <div>
-        <form onSubmit={createUser} style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '400px', marginBottom: '30px' }}>
-          <div>
-            <label>Name: </label>
-            <input placeholder="Name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
-          </div>
-          <div>
-            <label>Email: </label>
-            <input placeholder="Email" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
-          </div>
-          <div>
-            <label>Password: </label>
-            <input placeholder="Password" type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required />
-          </div>
-          <div>
-            <label>Phone: </label>
-            <input placeholder="Phone" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} required />
-          </div>
-          <div >
-            <label>Department: </label>
-            <input placeholder="Department" value={form.department} onChange={e => setForm({ ...form, department: e.target.value })} required />
-          </div>
-          <div>
-            <label>Role: </label>
-            <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}>
-              <option value="employee">Employee</option>
-              <option value="security">Security</option>
-            </select>
-          </div>
-          <button type="submit" style={{ padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-            Create User
-          </button>
-        </form>
-      </div>
+    <>
+      <div className="min-h-screen bg-black overflow-x-hidden text-white font-sans">
+        <nav className="sticky top-0 z-50 bg-black/60 backdrop-blur-xl border-b border-white/5 text-white p-4 transition-all duration-300">
+          <div className="flex justify-between items-center max-w-7xl mx-auto">
+            <div className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
+              PASSIFY
+            </div>
 
-      <h3>Staff Members</h3>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <table border="1" cellPadding="10" style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '30px' }}>
-        <thead>
-          <tr style={{ backgroundColor: '#f4f4f4' }}>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Department</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {staff.length > 0 ? staff.map(user => (
-            <tr key={user._id}>
-              <td>{user.name}</td>
-              <td>{user.email}</td>
-              <td style={{ textTransform: 'capitalize' }}>{user.role}</td>
-              <td>{user.department || '-'}</td>
-              <td>{user.isActive ? "Active" : "Disabled"}</td>
-              <td>
-                <button onClick={() => toggle(user._id)}>
-                  {user.isActive ? "Disable" : "Enable"}
-                </button>
-              </td>
-            </tr>
+            <div className="hidden md:flex items-center gap-6">
+              <span className="text-gray-400 font-medium">Admin Dashboard</span>
+              <LogoutButton />
+            </div>
 
-          )) : (
-            <tr>
-              <td colSpan="4" style={{ textAlign: 'center' }}>No staff found</td>
-            </tr>
+            <button
+              onClick={() => setOpen(!open)}
+              className="md:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+            >
+              <span className="text-2xl">{open ? "✕" : "☰"}</span>
+            </button>
+          </div>
+          {open && (
+            <div className="md:hidden mt-4 pt-4 border-t border-white/5 flex flex-col gap-4 animate-in slide-in-from-top duration-300">
+              <span className="text-gray-400 font-medium text-center">Admin Dashboard</span>
+              <div className="flex justify-center pb-2">
+                <LogoutButton />
+              </div>
+            </div>
           )}
-        </tbody>
-      </table>
+        </nav>
+        <div>
+          <BgGlow2 />
+        </div>
 
-      <h3>Registered Visitors</h3>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '15px' }}>
-        {visitors.length > 0 ? visitors.map(v => (
-          <div key={v._id} style={{ padding: '15px', border: '1px solid #ddd', borderRadius: '8px', backgroundColor: '#fdfdfd' }}>
-            <h4 style={{ margin: '0 0 5px 0' }}>{v.name}</h4>
-            <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>{v.email}</p>
+        {/* Create User Form Section */}
+        <div className="flex justify-center mt-10 px-4">
+          <form onSubmit={createUser} className="relative z-10 w-full max-w-[500px] items-center rounded-2xl p-8 border-t-5 border-t-purple-900 flex flex-col bg-white/5 border-white/10 border-2 shadow-[-0_25px_60px_rgba(0,0,0,0.85)] gap-5 backdrop-blur-2xl">
+            <h2 className='text-center text-2xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent'>Onboard New User</h2>
+
+            <div className="relative w-full">
+              <input
+                placeholder="Full Name"
+                className='w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/40 outline-none focus:border-purple-500/60 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'
+                value={form.name}
+                onChange={e => setForm({ ...form, name: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="relative w-full">
+              <input
+                type="email"
+                placeholder="Email Address"
+                className='w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/40 outline-none focus:border-purple-500/60 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'
+                value={form.email}
+                onChange={e => setForm({ ...form, email: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+              <div className="relative w-full">
+                <input
+                  type="password"
+                  placeholder="Password"
+                  className='w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/40 outline-none focus:border-purple-500/60 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'
+                  value={form.password}
+                  onChange={e => setForm({ ...form, password: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="relative w-full">
+                <input
+                  placeholder="Phone"
+                  className='w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/40 outline-none focus:border-purple-500/60 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'
+                  value={form.phone}
+                  onChange={e => setForm({ ...form, phone: e.target.value })}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="relative w-full">
+              <input
+                placeholder="Department"
+                className='w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/40 outline-none focus:border-purple-500/60 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'
+                value={form.department}
+                onChange={e => setForm({ ...form, department: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="relative w-full">
+              <select
+                className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-white/10 text-white placeholder-white/40 outline-none focus:border-purple-500/60 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition"
+                value={form.role}
+                onChange={e => setForm({ ...form, role: e.target.value })}
+              >
+                <option value="employee">Employee</option>
+                <option value="security">Security Personnel</option>
+              </select>
+            </div>
+
+            <button type="submit" className='mt-4 w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-[0_12px_30px_rgba(139,92,246,0.6)] hover:scale-[1.03] hover:shadow-[0_18px_45px_rgba(139,92,246,0.8)] transition-all'>Onboard User</button>
+          </form>
+        </div>
+
+        {/* Organization Staff Section */}
+        <div className="mt-20">
+          <h2 className="justify-center flex items-center text-white font-bold text-3xl mb-8">Organization Staff</h2>
+          <div className="max-w-7xl mx-auto px-4">
+            {loading && staff.length === 0 ? (
+              <div className="flex justify-center py-20">
+                <div className="w-12 h-12 border-4 border-white/10 border-t-purple-500 rounded-full animate-spin"></div>
+              </div>
+            ) : staff.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {staff.map(user => (
+                  <div key={user._id} className="relative z-10 rounded-2xl p-6 bg-white/5 border border-white/10 shadow-[-0_25px_60px_rgba(0,0,0,0.5)] backdrop-blur-2xl flex flex-col gap-4">
+                    <div className="flex justify-between items-start">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-xl">
+                        {user.name[0].toUpperCase()}
+                      </div>
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${user.isActive ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                        }`}>
+                        {user.isActive ? "Active" : "Disabled"}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h3 className="text-xl font-bold truncate">{user.name}</h3>
+                      <p className="text-gray-400 text-sm truncate">{user.email}</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 pt-2 border-t border-white/5 mt-auto">
+                      <div>
+                        <p className="text-[10px] font-bold text-gray-500 uppercase">Role</p>
+                        <p className="text-sm font-medium capitalize">{user.role}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold text-gray-500 uppercase">Dept</p>
+                        <p className="text-sm font-medium truncate">{user.department || 'N/A'}</p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => toggle(user._id)}
+                      className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all duration-300 border ${user.isActive
+                          ? 'bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white'
+                          : 'bg-green-500/10 border-green-500/20 text-green-400 hover:bg-green-500 hover:text-white'
+                        }`}
+                    >
+                      {user.isActive ? 'Disable Access' : 'Restore Access'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-gray-500 py-20">No staff members found.</p>
+            )}
           </div>
-        )) : (
-          <p>No visitors found</p>
-        )}
-      </div>
+        </div>
 
-    </div>
+        {/* Registered Visitors Section */}
+        <div className="mt-20">
+          <h2 className="justify-center flex items-center text-white font-bold text-3xl mb-8">Registered Visitors</h2>
+          <div className="max-w-7xl mx-auto px-4 pb-20">
+            {loading && visitors.length === 0 ? (
+              <div className="flex justify-center py-20">
+                <div className="w-12 h-12 border-4 border-white/10 border-t-purple-500 rounded-full animate-spin"></div>
+              </div>
+            ) : visitors.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {visitors.map(v => (
+                  <div key={v._id} className="relative z-10 rounded-2xl p-6 bg-white/5 border border-white/10 shadow-[-0_25px_60px_rgba(0,0,0,0.5)] backdrop-blur-2xl flex flex-col items-center gap-4 text-center">
+                    <div className="w-16 h-16 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-2xl">
+                      {v.name[0].toUpperCase()}
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-lg leading-tight">{v.name}</h3>
+                      <p className="text-gray-500 text-sm mt-1">{v.email}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="col-span-full py-20 text-center text-gray-500 bg-white/5 border border-white/10 border-dashed rounded-3xl">
+                No registered visitors found.
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      {/* Background glow for the bottom */}
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full h-[300px] bg-purple-900/10 blur-[120px] rounded-full pointer-events-none"></div>
+    </>
   )
 }
 

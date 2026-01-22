@@ -24,13 +24,14 @@ const Protection = async (req, res, next) => {
                 message: "User not found"
             })
         }
-        next()
-        if (!req.user.isActive) {
+
+        if (req.user.role !== 'visitor' && req.user.isActive === false) {
             return res.status(403).json({
                 message: "Account is disabled by admin"
             });
         }
 
+        next();
     }
     catch (error) {
         res.status(401).json({

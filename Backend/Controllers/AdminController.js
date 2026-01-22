@@ -84,11 +84,13 @@ export const getVisitorHistory = async (req, res) => {
 
 export const getAllEmployees = async (req, res) => {
     try {
-        const employees = await User.find({ role: { $in: ['employee', 'security'] } }).select('name email role department isActive _id');
+        const employees = await User.find({
+            role: { $in: ['employee', 'security'] }
+        }).select('name email role department isActive _id');
         res.status(200).json(employees);
     } catch (error) {
         res.status(500).json({
-            message: "Error fetching employees",
+            message: "Error fetching staff members",
             error: error.message
         });
     }
