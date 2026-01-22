@@ -101,7 +101,7 @@ const AdminDashboard = () => {
           <BgGlow2 />
         </div>
 
-        {/* Create User Form Section */}
+    
         <div className="flex justify-center mt-10 px-4">
           <form onSubmit={createUser} className="relative z-10 w-full max-w-[500px] items-center rounded-2xl p-8 border-t-5 border-t-purple-900 flex flex-col bg-white/5 border-white/10 border-2 shadow-[-0_25px_60px_rgba(0,0,0,0.85)] gap-5 backdrop-blur-2xl">
             <h2 className='text-center text-2xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent'>Onboard New User</h2>
