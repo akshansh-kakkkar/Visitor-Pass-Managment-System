@@ -210,11 +210,11 @@ const AdminDashboard = () => {
                     </div>
 
                     <button onClick={() => toggle(user._id)} className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all duration-300 border ${user.isActive
-                          ? 'bg-gradient-to-r from-purple-400 to-indigo-400 text-white hover:bg-gradient-to-r hover:from-purple-600 hover:to-indigo-600 border-gray-500'
-                          : 'bg-green-500/10 border-green-500/20 text-green-400 hover:bg-green-500'
+                          ? 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white hover:bg-gradient-to-r hover:from-purple-600 hover:to-indigo-600 border-gray-500'
+                          : 'bg-gradient-to-r from-purple-500 to-indigo-5~00 text-white hover:bg-gradient-to-r hover:from-purple-600 hover:to-indigo-600 border-gray-500'
                         }`}
                     >
-                      {user.isActive ? 'Disable Access' : 'Restore Access'}
+                      {user.isActive ? 'Disable Access' : 'Enable Access'}
                     </button>
                   </div>
                 ))}
