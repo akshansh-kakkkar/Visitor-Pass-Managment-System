@@ -8,6 +8,7 @@ const VisitorDashboard = () => {
   const [employees, setEmployees] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [passes, setPasses] = useState([])
+  const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({
     hostId: "",
     date: "",

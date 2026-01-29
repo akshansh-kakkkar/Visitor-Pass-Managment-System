@@ -127,15 +127,13 @@ const EmployeeDashboard = () => {
                       <button
                         disabled={actionLoading === a._id}
                         onClick={() => action(a._id, "approve")}
-                        className="flex-1 py-4 rounded-xl bg-gradient-to-r from-green-600 to-green-500 text-white font-bold text-lg shadow-[0_12px_30px_rgba(34,197,94,0.3)] hover:scale-[1.03] active:scale-[0.97] transition-all disabled:opacity-50"
-                      >
+                        className="flex-1 py-4 rounded-xl bg-green-600  text-white font-bold text-lg  " >
                         {actionLoading === a._id ? 'Processing...' : 'Approve Request'}
                       </button>
                       <button
                         disabled={actionLoading === a._id}
                         onClick={() => action(a._id, "reject")}
-                        className="flex-1 py-4 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-lg hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-400 transition-all disabled:opacity-50"
-                      >
+                        className="flex-1 py-4 rounded-xl border border-white/10  font-bold text-lg  text-white bg-red-600  ">
                         Decline
                       </button>
                     </div>
@@ -155,7 +153,6 @@ const EmployeeDashboard = () => {
           )}
         </div>
       </div>
-
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full h-[300px] bg-purple-900/10 blur-[120px] rounded-full pointer-events-none"></div>
     </>
   )

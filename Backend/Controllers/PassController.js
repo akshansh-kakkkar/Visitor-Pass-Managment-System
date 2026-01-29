@@ -60,10 +60,14 @@ const handleAppointment = async (req, res) => {
             // Send email only if credentials are configured
             if (visitor.email && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
                 try {
+                    console.log(`Attempting to send email to: ${visitor.email}`);
                     await sendPassEmail(visitor.email, PdfPath);
+                    console.log('Email sent successfully!');
                 } catch (emailErr) {
-                    console.log("Email sending failed (credentials may not be configured):", emailErr.message);
+                    console.error("Email sending failed:", emailErr);
                 }
+            } else {
+                console.log('Email not sent - missing visitor email or credentials');
             }
 
             const pass = await Pass.create({

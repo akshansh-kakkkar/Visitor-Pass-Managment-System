@@ -164,7 +164,7 @@ const HomePage = () => {
                         </div>
                     </div>
                     <div className="max-w-7xl mx-auto pt-20 mt-20 border-t border-white/5 text-center text-gray-500 text-xs">
-                        &copy; 2026 PASSIFY. All Rights Reserved
+                        &copy; 2026 PASSIFY. All Rights Reserved 
                     </div>
 
                 </footer>
