@@ -33,12 +33,16 @@ const VisitorDashboard = () => {
   const submit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true)
       await api.post("/api/visitor/create-appointment", form);
       alert("Appointment requested");
       setForm({ hostId: "", date: "", time: "", purpose: "" });
       load();
     } catch (err) {
       alert(err.response?.data?.message || "Failed to request appointment");
+    }
+    finally{
+      setLoading(false)
     }
   };
 

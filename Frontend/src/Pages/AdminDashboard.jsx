@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react'
 import api from '../api/api.js'
 import LogoutButton from '../Components/LogoutButton';
 import BgGlow2 from '../Components/BgGlow2';
+import LoadingComponent from '../Components/LoadingComponent.jsx';
 
 const AdminDashboard = () => {
+
   const [error, seterror] = useState('')
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false);
@@ -178,30 +180,26 @@ const AdminDashboard = () => {
           <h2 className="justify-center flex items-center text-white font-bold text-3xl mb-8">Organization Staff</h2>
           <div className="max-w-7xl mx-auto px-4">
             {loading && staff.length === 0 ? (
-              <div className="flex justify-center py-20">
-                <div className="w-12 h-12 border-4 border-white/10 border-t-purple-500 rounded-full animate-spin"></div>
-              </div>
+              <LoadingComponent/>
             ) : staff.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
                 {staff.map(user => (
-                  <div key={user._id} className="relative z-10 rounded-2xl p-6 bg-white/5 border border-white/10 shadow-[-0_25px_60px_rgba(0,0,0,0.5)] backdrop-blur-2xl flex flex-col gap-4">
-                    <div className="flex justify-between items-start">
+                  <div key={user._id} className="relative z-10 rounded-2xl  justify-center p-6 bg-white/5 border border-white/10 shadow-[-0_25px_60px_rgba(0,0,0,0.5)] backdrop-blur-2xl flex flex-col gap-4">
+                    <div className="flex justify-center items-start">
                       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-xl">
                         {user.name[0].toUpperCase()}
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${user.isActive ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'
-                        }`}>
-                        {user.isActive ? "Active" : "Disabled"}
-                      </span>
+                      
                     </div>
 
                     <div>
-                      <h3 className="text-xl font-bold truncate">{user.name}</h3>
-                      <p className="text-gray-400 text-sm truncate">{user.email}</p>
+                      <div className='flex justify-center'><h3 className="text-xl font-bold truncate">{user.name}</h3></div>
+                      
+                      <div className='flex justify-center'><p className="text-gray-400 text-sm">{user.email}</p></div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 pt-2 border-t border-white/5 mt-auto">
-                      <div>
+                      <div className='flex justify-center flex-col mx-5'>
                         <p className="text-[10px] font-bold text-gray-500 uppercase">Role</p>
                         <p className="text-sm font-medium capitalize">{user.role}</p>
                       </div>
@@ -211,11 +209,9 @@ const AdminDashboard = () => {
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => toggle(user._id)}
-                      className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all duration-300 border ${user.isActive
-                          ? 'bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white'
-                          : 'bg-green-500/10 border-green-500/20 text-green-400 hover:bg-green-500 hover:text-white'
+                    <button onClick={() => toggle(user._id)} className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all duration-300 border ${user.isActive
+                          ? 'bg-gradient-to-r from-purple-400 to-indigo-400 text-white hover:bg-gradient-to-r hover:from-purple-600 hover:to-indigo-600 border-gray-500'
+                          : 'bg-green-500/10 border-green-500/20 text-green-400 hover:bg-green-500'
                         }`}
                     >
                       {user.isActive ? 'Disable Access' : 'Restore Access'}
@@ -234,14 +230,12 @@ const AdminDashboard = () => {
           <h2 className="justify-center flex items-center text-white font-bold text-3xl mb-8">Registered Visitors</h2>
           <div className="max-w-7xl mx-auto px-4 pb-20">
             {loading && visitors.length === 0 ? (
-              <div className="flex justify-center py-20">
-                <div className="w-12 h-12 border-4 border-white/10 border-t-purple-500 rounded-full animate-spin"></div>
-              </div>
+              <LoadingComponent/>
             ) : visitors.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {visitors.map(v => (
                   <div key={v._id} className="relative z-10 rounded-2xl p-6 bg-white/5 border border-white/10 shadow-[-0_25px_60px_rgba(0,0,0,0.5)] backdrop-blur-2xl flex flex-col items-center gap-4 text-center">
-                    <div className="w-16 h-16 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-2xl">
+                    <div className="w-16 h-16 rounded-full flex items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-600 font-bold text-2xl">
                       {v.name[0].toUpperCase()}
                     </div>
                     <div>
