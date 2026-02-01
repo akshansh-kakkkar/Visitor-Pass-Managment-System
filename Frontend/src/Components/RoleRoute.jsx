@@ -6,8 +6,9 @@ const GetUserRole = ({ children, role }) => {
         return <Navigate to="/" replace />;
     }
     if (auth.role !== role) {
-        return <Navigate to="/unauthorized" replace />;
+        return <Navigate to="/" replace />;
     }
     return children;
 };
 export default GetUserRole;
+
