@@ -22,7 +22,7 @@ const SecurityDashboard = () => {
         if (devices && devices.length) {
 
           qr.start(
-            devices[0].id,
+            {facingMode : "environment"},
             {
               fps: 10,
               qrbox: 250
