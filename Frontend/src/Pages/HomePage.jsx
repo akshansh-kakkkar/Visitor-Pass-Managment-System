@@ -64,79 +64,8 @@ const HomePage = () => {
                     </div>
                 </section>
 
-                <section id="about" className="py-24">
-                    <div className="font-bold flex justify-center mt-10">
-                        <h2 className="text-center sm:max-w-xl text-3xl max-w-sm sm:text-5xl text-white sm:leading-tight font-bold">
-                            Everything you need to <span className='text-[#825cff]'>run your security system.</span>
-                        </h2>
-                    </div>
-                    <div className="flex justify-center p-3 items-center">
-                        <p className="text-gray-400 text-center max-w-xl">
-                            Passify replaces fragmented tools with a single, powerful visitor management system designed for the modern workplace.
-                        </p>
-                    </div>
 
-                    <div className="flex justify-center px-4 mt-12">
-                        <div className="w-full max-w-md bg-white/5 backdrop-blur-xl rounded-3xl p-1 border border-white/10 hover:border-[#8B5CF6]/50 transition-all duration-500 hover:shadow-[0_0_50px_rgba(139,92,246,0.15)] group">
-                            <div className="bg-[#0A0A0B] rounded-[22px] overflow-hidden">
-                                <div className="bg-gradient-to-r from-[#8B5CF6] to-[#A855F7] p-5">
-                                    <h3 className="text-white font-bold text-xl tracking-wide">PASSIFY</h3>
-                                    <p className="text-purple-100/80 text-xs">Secure Visitor Pass</p>
-                                </div>
-
-                                <div className="p-6">
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-                                                <svg className="w-8 h-8 text-[#8B5CF6]" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                                                </svg>
-                                            </div>
-                                            <div>
-                                                <h4 className="text-white font-semibold text-lg">Akshansh Kakkar</h4>
-                                                <p className="text-gray-500 text-sm">Visiting • Tech Department</p>
-                                                <p className="text-gray-500 text-sm">16 Jan 2026 • 11:30 AM</p>
-                                            </div>
-                                        </div>
-                                        <div className="w-20 h-20 rounded-xl bg-white p-2 flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform duration-500">
-                                            <svg viewBox="0 0 100 100" className="w-full h-full text-black">
-                                                <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" strokeWidth="2" />
-                                                <rect x="20" y="20" width="20" height="20" fill="currentColor" />
-                                                <rect x="60" y="20" width="20" height="20" fill="currentColor" />
-                                                <rect x="20" y="60" width="20" height="20" fill="currentColor" />
-                                                <rect x="45" y="45" width="10" height="10" fill="currentColor" />
-                                            </svg>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center justify-between mt-8 pt-5 border-t border-white/5">
-                                        <p className="text-gray-500 text-xs font-mono uppercase tracking-widest">Pass ID • PFY-82917</p>
-                                        <div className="bg-[#8B5CF6]/20 border border-[#8B5CF6]/50 px-4 py-1.5 rounded-full">
-                                            <span className="text-[#8B5CF6] font-bold text-xs">ACTIVE</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <div className="flex justify-center opacity-20"><div className="bg-gradient-to-r from-transparent via-white to-transparent h-px w-[80vw]"></div></div>
-
-                <section id="reviews" className="py-24 px-4">
-                    <div className="flex justify-center text-center mb-16">
-                        <h1 className="text-white text-4xl sm:text-6xl font-bold max-w-xl">Reviews By Our <span className="text-[#825cff]">Customers</span></h1>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
-                        <ReviewCard name="Akshansh Kakkar" dept="Tech" date="15 Jan 2026" comment="Clean UI, secure entry flow, and overall an excellent visitor system." />
-                        <ReviewCard name="Ramesh" dept="Business" date="30 Jan 2026" comment="Intuitive design with a professional look that makes visitor handling fast and stress-free." />
-                        <ReviewCard name="Kanika" dept="Design" date="15 Jan 2026" comment="Quick pass generation, smooth verification, and a modern interface that feels secure." />
-                        <ReviewCard name="Priyanka" dept="Corporate" date="15 Jan 2026" comment="Excellent attention to detail, combining visual clarity with strong performance." />
-                    </div>
-                </section>
-
-                <div className="flex justify-center opacity-20"><div className="bg-gradient-to-r from-transparent via-white to-transparent h-px w-[80vw]"></div></div>
+                <div className="flex justify-center opacity-20 mt-20"><div className="bg-gradient-to-r from-transparent via-white to-transparent h-px w-[80vw]"></div></div>
 
                 <footer id="contact" className="py-20 px-8">
                     <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">

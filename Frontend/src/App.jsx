@@ -20,14 +20,14 @@ function App() {
         <Route  element={<Navbar />}>
           <Route path='/' element={<HomePage />} />
         </Route>
-        <Route path='/login' element={<Login />} />
+         <Route path='/login' element={<Login />} />
         <Route path='/visitor-register' element={<VisitorRegister />} />
         <Route path='/visitor-login' element={<VisitorLogin />} />
         <Route path='/register' element={<VisitorRegister />} />
         <Route path='/employee' element={<Protection><GetUserRole role='employee'><EmployeeDashboard /></GetUserRole></Protection>} />
         <Route path='/security' element={<Protection><GetUserRole role='security'><SecurityDashboard /></GetUserRole></Protection>} />
         <Route path="/visitor" element={<Protection><GetUserRole role="visitor"><VisitorDashboard /></GetUserRole></Protection>} />
-        <Route path='/admin' element={<Protection><GetUserRole role='admin'><AdminDashboard /></GetUserRole></Protection>} />
+        <Route path='/admin' element={<Protection><GetUserRole role='admin'><AdminDashboard /></GetUserRole></Protection>} /> 
       </Routes>
     </>
   )
