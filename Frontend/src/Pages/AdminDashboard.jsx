@@ -1,231 +1,171 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import api from '../api/api.js'
-import LogoutButton from '../Components/LogoutButton';
-import BgGlow2 from '../Components/BgGlow2';
-import LoadingComponent from '../Components/LoadingComponent.jsx';
-import AdminNav from '../Components/AdminNav.jsx';
+import AdminNav from "../Components/AdminNav.jsx"
+import LoadingComponent from "../Components/LoadingComponent.jsx"
+import BgGlow2 from '../Components/BgGlow2.jsx';
 const AdminDashboard = () => {
-
-  const [error, seterror] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    password: '',
-    department: "",
-    role: 'employee',
-    phone: ''
-  })
+  const [Loading, setLoading] = useState(null);
+  const [form, setform] = useState({
+    name: "", email: "", password: "", phone: "", department: "", role: ""
+  });
+  const [checkVisitor, setCheckVisitor] = useState([]);
+  const [error, seterror] = useState("");
   const [staff, setStaff] = useState([])
-  const [visitors, setVisitors] = useState([])
 
   const loadData = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const t = Date.now();
-      const [sRes, vRes] = await Promise.all([
-        api.get(`/api/admin/employees?t=${t}`),
-        api.get(`/api/admin/all-visitors?t=${t}`)
-      ]);
-      setStaff(sRes.data);
-      setVisitors(vRes.data.visitor || []);
-    } catch (error) {
-      seterror(error.response?.data?.message || "Failed to fetch data")
-    } finally {
-      setLoading(false)
+      const [staffRes, VisitorRes] = await Promise.all([
+        api.get(`/api/admin/employees`),
+        api.get(`/api/admin/all-visitors`)
+      ])
+
+      setStaff(staffRes.data);
+      setCheckVisitor(VisitorRes.data.visitor || []);
+    }
+    catch (error) {
+      seterror(error.response?.data?.message)
+    }
+    finally {
+      setLoading(null);
     }
   }
-
   useEffect(() => {
     loadData();
   }, [])
 
-  const toggle = async (id) => {
+  const toggleSwitch = async (id) => {
     try {
-      await api.patch(`/api/admin/toggle-staff/${id}`);
-      await loadData();
-    } catch (error) {
-      alert(error.response?.data?.message || "Failed to toggle status");
+      await api.patch(`/api/admin/toggle-staff/${id}`)
+      await loadData()
     }
-  };
-
-  const createUser = async (e) => {
-    e.preventDefault();
+    catch (error) {
+      seterror(error.response?.data?.message || "Failed to fetch data")
+    }
+  }
+  const createStaff = async (e) => {
     try {
-      await api.post('/api/admin/create-user', form)
-      alert("User Created Successfully")
-      setForm({
+      e.preventDefault()
+      await api.post(`/api/admin/create-user/`, form);
+      alert("Staff Created Successfully!");
+      setform({
         name: "",
         email: "",
         password: "",
-        role: "employee",
         phone: "",
-        department: ""
+        department: "",
+        role: ""
       })
-      await loadData();
-    } catch (error) {
-      alert(error.response?.data?.message || "Error creating user")
+    }
+    catch (error) {
+      seterror(error.response?.data?.message || "Error while creating staff")
     }
   }
-
   return (
     <>
-      <div className="min-h-screen bg-black overflow-x-hidden text-white">
-        <AdminNav/>
+      <div className='bg-black overflow-x-hidden text-white min-h-screen'>
+        <AdminNav />
         <div>
           <BgGlow2 />
         </div>
-
-    
-        <div className="flex justify-center mt-10 px-4">
-          <form onSubmit={createUser} className=" border-white relative z-10 w-full max-w-[500px] items-center rounded-2xl p-8 border-t-5 border-t-purple-900   flex flex-col bg-gray-800 border-gray-900 border-2 shadow-[-0_25px_60px_rgba(0,0,0,0.85)] gap-5">
-            <h2 className='text-center text-2xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 text-transparent text-white rounded-2xl p-5'>Create New User</h2>
-
-            <div className="relative w-full">
-              <input
-                placeholder="Full Name"
-                className='w-full px-4 py-3 rounded-xl bg-gray-800 border border-bg-gray-400 text-white placeholder-gray-400 outline-none focus:border-purple-700 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'
-                value={form.name}
-                onChange={e => setForm({ ...form, name: e.target.value })}
-                required
-              />
+        <div className='flex justify-center mt-10'>
+          <form onSubmit={createStaff} className="relative  z-10 w-[340px] sm:w-[420px] items-center rounded-2xl p-8 border-t-5 border-t-purple-900 flex flex-col bg-gray-600 border-gray-800 border-2 gap-5">
+            <h2 className='p-2 rounded-xl text-center text-2xl font-bold  bg-gradient-to-r from-purple-600 to-indigo-600'> createStaff</h2>
+            <div className='relative w-full'>
+              <input type="text" placeholder='fullname'  className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.name} onChange={e => setform({ ...form, name: e.target.value })} />
             </div>
-
-            <div className="relative w-full">
-              <input
-                type="email"
-                placeholder="Email Address"
-                className='w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-400 text-white placeholder-gray-400 outline-none focus:border-purple-700 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'
-                value={form.email}
-                onChange={e => setForm({ ...form, email: e.target.value })}
-                required
-              />
+            <div className='relative w-full'>
+              <input type="email" placeholder='email'  className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.email} onChange={e => setform({ ...form, email: e.target.value })} />
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-              <div className="relative w-full">
-                <input
-                  type="password"
-                  placeholder="Password"
-                  className='w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-400 text-white placeholder-gray-400 outline-none focus:border-purple-700 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'
-                  value={form.password}
-                  onChange={e => setForm({ ...form, password: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="relative w-full">
-                <input
-                  placeholder="Phone"
-                  className='w-full px-4 py-3 border-gray-400 rounded-xl bg-gray-800 border  text-white placeholder-gray-400 outline-none focus:border-purple-700 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'
-                  value={form.phone}
-                  onChange={e => setForm({ ...form, phone: e.target.value })}
-                  required
-                />
-              </div>
+            <div className='relative w-full'>
+              <input type="password" placeholder='password'  className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.password} onChange={e => setform({ ...form, password: e.target.value })} />
             </div>
-
-            <div className="relative w-full">
-              <input
-                placeholder="Department"
-                className='w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-400 text-white placeholder-gray-400 outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'
-                value={form.department}
-                onChange={e => setForm({ ...form, department: e.target.value })}
-                required
-              />
+            <div className='relative w-full'>
+              <input type="text" placeholder='phone'  className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.phone} onChange={e => setform({ ...form, phone: e.target.value })} />
             </div>
-
-            <div className="relative w-full">
-              <select
-                className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-800 text-white placeholder-gray-400 outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition"
-                value={form.role}
-                onChange={e => setForm({ ...form, role: e.target.value })}
-              >
-                <option value="employee">Employee</option>
-                <option value="security">Security Personnel</option>
+                        <div className='relative w-full'>
+              <input type="department"  className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' placeholder='department' value={form.department} onChange={e => setform({ ...form, department: e.target.value })} />
+            </div>
+            <div className='relative w-full'>
+              <select value={form.role}  className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' onChange={e => setform({ ...form, role: e.target.value })} required>
+                <option value="">Select Role</option>
+                <option value="employee">employee</option>
+                <option value="security">security</option>
               </select>
             </div>
-
-            <button type="submit" className='mt-4 w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-[0_12px_30px_rgba(139,92,246,0.6)] hover:scale-[1.03] hover:shadow-[0_18px_45px_rgba(139,92,246,0.8)] transition-all'>Onboard User</button>
+            <div className="mt-4">
+              <button className='mt-4 w-full p-5 py-3 rounded-xl border-none bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-[0_12px_30px_rgba(139,92,246,0.6)] hover:scale-[1.03] hover:shadow-[0_18px_45px_rgba(139,92,246,0.8)] transition-all'>Create Visitor</button>
+            </div>
           </form>
         </div>
-
-        <div className="mt-20">
-          <h2 className="justify-center flex items-center text-white font-bold text-3xl mb-8">Organization Staff</h2>
-          <div className="max-w-7xl mx-auto px-4">
-            {loading && staff.length === 0 ? (
-              <LoadingComponent/>
-            ) : staff.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
-                {staff.map(user => (
-                  <div key={user._id} className="relative z-10 rounded-2xl  justify-center p-6 bg-gray border border-gray-900 shadow-[-0_25px_60px_rgba(0,0,0,0.5)] backdrop-blur-2xl flex flex-col gap-4">
-                    <div className="flex justify-center items-start">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-xl">
-                        {user.name[0].toUpperCase()}
-                      </div>
-                      
-                    </div>
-
+        <div className='mt-24'>
+          <h2  className="justify-center flex items-center text-white font-bold text-3xl mb-8">Staff</h2>
+          <div className='mx-auto px-4 max-w-7xl'>
+            {Loading && staff && staff.length === 0 ? (
+              <LoadingComponent />
+            ) : staff && staff.length > 0 ? (
+              <div  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
+                {staff.map(staff => (
+                  <div key={staff._id} className='border border-gray-600 rounded-2xl p-6 flex flex-col items-center gap-4 bg-gray-800'>
                     <div>
-                      <div className='flex justify-center'><h3 className="text-xl font-bold truncate">{user.name}</h3></div>
-                      
-                      <div className='flex justify-center'><p className="text-gray-400 text-sm">{user.email}</p></div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4 pt-2 border-t border-gray-800 mt-auto">
-                      <div className='flex justify-center flex-col mx-5'>
-                        <p className="text-[10px] font-bold text-gray-500 uppercase">Role</p>
-                        <p className="text-sm font-medium capitalize">{user.role}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-bold text-gray-500 uppercase">Dept</p>
-                        <p className="text-sm font-medium truncate">{user.department || 'N/A'}</p>
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-2xl shadow-lg">
+                        {staff.name && staff.name[0] ? staff.name[0].toUpperCase() : ''}
                       </div>
                     </div>
-
-                    <button onClick={() => toggle(user._id)} className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all duration-300 border ${user.isActive
-                          ? 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white hover:bg-gradient-to-r hover:from-purple-600 hover:to-indigo-600 border-gray-500'
-                          : 'bg-gradient-to-r from-purple-500 to-indigo-5~00 text-white hover:bg-gradient-to-r hover:from-purple-600 hover:to-indigo-600 border-gray-500'
-                        }`}
-                    >
-                      {user.isActive ? 'Disable Access' : 'Enable Access'}
-                    </button>
+                    <div className='flex-col flex items-center gap-2 text-center'>
+                      <div className="font-bold text-xl">
+                        <h3 className='text-gray-100'>{staff.name}</h3>
+                      </div>
+                      <div className='text-gray-400 text-sm'>
+                        <p>{staff.email}</p>
+                      </div>
+                      <div className='grid grid-cols-2 gap-4 mt-4 text-gray-300 text-sm'>
+                        <p >Role :</p>
+                        <p>{staff.role}</p>
+                        <p>Department :</p>
+                        <p>{staff.department || "N/A"}</p>
+                      </div>
+                      <div className='mt-4'>
+                        <button onClick={() => toggleSwitch(staff._id)} className={`w-full bg-green-500 font-bold hover:bg-green-700 cursor-pointer p-3 rounded-xl ${staff && staff.isActive ? 'bg-red-600 hover:bg-red-800' : 'bg-green-600 hover:bg-green-800'} text-white transition`}>
+                          {staff && staff.isActive ? 'Disable Access' : 'Enable Access'}
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-center text-gray-500 py-20">No staff members found.</p>
+              <p className='text-4xl flex justify-center '>No Staff Found</p>
             )}
           </div>
         </div>
-
-
-        <div className="mt-20">
-          <h2 className="justify-center flex items-center text-white font-bold text-3xl mb-8">Registered Visitors</h2>
-          <div className="max-w-7xl mx-auto px-4 pb-20">
-            {loading && visitors.length === 0 ? (
-              <LoadingComponent/>
-            ) : visitors.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {visitors.map(v => (
-                  <div key={v._id} className="relative z-10 rounded-2xl p-6 bg-gray-800 border border-gray-900 shadow-[-0_25px_60px_rgba(0,0,0,0.5)] backdrop-blur-2xl flex flex-col items-center gap-4 text-center">
-                    <div className="w-16 h-16 rounded-full flex items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-600 font-bold text-2xl">
-                      {v.name[0].toUpperCase()}
+        <div>
+          <h2  className="justify-center flex items-center text-white font-bold text-3xl mb-8">Visitors</h2>
+          <div className='mx-auto px-4 max-w-7xl'>
+            {Loading && checkVisitor && checkVisitor.length === 0 ? (
+              <LoadingComponent />
+            ) : checkVisitor && checkVisitor.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
+                {checkVisitor.map(v => (
+                  <div key={v._id} className='border border-gray-600 rounded-2xl p-6 flex flex-col items-center gap-4 bg-gray-800'>
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-2xl shadow-lg">
+                      {v.name && v.name[0] ? v.name[0].toUpperCase() : ''}
                     </div>
-                    <div>
-                      <h3 className="font-bold text-lg leading-tight">{v.name}</h3>
-                      <p className="text-gray-500 text-sm mt-1">{v.email}</p>
+                    <div className='font-semibold text-xl text-center '>
+
+                      <h3>{v.name}</h3>
+                      <p>{v.email}</p>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="col-span-full py-20 text-center text-gray-500 bg-gray-800 border border-gray-900 border-dashed rounded-3xl">
-                No registered visitors found.
-              </div>
+              <div>No Registered Visitors Found</div>
             )}
           </div>
         </div>
       </div>
+
     </>
   )
 }
