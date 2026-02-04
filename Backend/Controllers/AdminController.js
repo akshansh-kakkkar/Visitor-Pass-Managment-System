@@ -118,3 +118,30 @@ export const toggleStaff = async (req, res) => {
         })
     }
 }
+
+
+export const EditStaff = async (req, res) => {
+    try {
+        const updateUser = await User.findByIdAndUpdate(
+            id,
+            req.body,
+        )
+        if (!updatedEmployee) {
+            return res.status(404).json({
+                message: "Employee not found"
+            });
+        }
+
+        res.status(200).json({
+            message: "Employee has been updated successfully",
+            employee: updatedEmployee
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: "An error updated while updating the employee",
+            error: error.message
+        });
+
+    }
+}

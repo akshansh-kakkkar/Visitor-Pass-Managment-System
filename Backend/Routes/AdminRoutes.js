@@ -1,5 +1,5 @@
 import express from 'express';
-import { CreateStaff, getAllVisitors, getAllactiveVisitors, getVisitorHistory, getAllEmployees, toggleStaff } from '../Controllers/AdminController.js';
+import { CreateStaff, getAllVisitors, getAllactiveVisitors, getVisitorHistory, getAllEmployees, toggleStaff, EditStaff } from '../Controllers/AdminController.js';
 import { Protection, restrictedTo } from '../Middleware/Protect.js';
 
 const router = express.Router();
@@ -10,4 +10,5 @@ router.get('/all-active-visitors', Protection, restrictedTo('admin'), getAllacti
 router.get('/all-visitor-logs', Protection, restrictedTo('admin'), getVisitorHistory)
 router.get('/employees', Protection, getAllEmployees)
 router.patch('/toggle-staff/:id', Protection, restrictedTo('admin'),  toggleStaff)
+router.patch('/edit-employees', Protection, restrictedTo("admin"), EditStaff)
 export default router;

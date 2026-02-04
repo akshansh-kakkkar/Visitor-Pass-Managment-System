@@ -11,7 +11,14 @@ const AdminDashboard = () => {
   const [checkVisitor, setCheckVisitor] = useState([]);
   const [error, seterror] = useState("");
   const [staff, setStaff] = useState([])
-
+  const [editStaff, setEditStaff] = useState(null)
+  const [editStafform, setEditStafform] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    department: "",
+    role: ""
+  })
   const loadData = async () => {
     setLoading(true);
     try {
@@ -61,6 +68,36 @@ const AdminDashboard = () => {
       seterror(error.response?.data?.message || "Error while creating staff")
     }
   }
+
+  const editingStaff = async () => {
+    try {
+      setEditStaff(staff._id);
+      setEditStafform({
+        name: staff.name || "",
+        email: staff.email || "",
+        phone: staff.phone || "",
+        department: staff.department || "",
+        role : staff.role || ""
+      })
+    }
+    catch (error) {
+      seterror(error.response?.data?.message || "An Error Occured while editing the staff")
+    }
+  }
+
+  const updateEmployee = async(e)=>{
+    e.preventDefault();
+    try{
+      await api.patch(`/api/admin/employees/${editingStaff}`);
+      alert("Staff Updated Successfully");
+      setEditStaff(null);
+      loadData();
+
+    }
+    catch(error){
+      seterror(error.response?.data?.message || "An error occured while confirming your edit")
+    }
+  }
   return (
     <>
       <div className='bg-black overflow-x-hidden text-white min-h-screen'>
@@ -72,22 +109,22 @@ const AdminDashboard = () => {
           <form onSubmit={createStaff} className="relative  z-10 w-[340px] sm:w-[420px] items-center rounded-2xl p-8 border-t-5 border-t-purple-900 flex flex-col bg-gray-600 border-gray-800 border-2 gap-5">
             <h2 className='p-2 rounded-xl text-center text-2xl font-bold  bg-gradient-to-r from-purple-600 to-indigo-600'> createStaff</h2>
             <div className='relative w-full'>
-              <input type="text" placeholder='fullname'  className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.name} onChange={e => setform({ ...form, name: e.target.value })} />
+              <input type="text" placeholder='fullname' className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.name} onChange={e => setform({ ...form, name: e.target.value })} />
             </div>
             <div className='relative w-full'>
-              <input type="email" placeholder='email'  className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.email} onChange={e => setform({ ...form, email: e.target.value })} />
+              <input type="email" placeholder='email' className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.email} onChange={e => setform({ ...form, email: e.target.value })} />
             </div>
             <div className='relative w-full'>
-              <input type="password" placeholder='password'  className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.password} onChange={e => setform({ ...form, password: e.target.value })} />
+              <input type="password" placeholder='password' className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.password} onChange={e => setform({ ...form, password: e.target.value })} />
             </div>
             <div className='relative w-full'>
-              <input type="text" placeholder='phone'  className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.phone} onChange={e => setform({ ...form, phone: e.target.value })} />
-            </div>
-                        <div className='relative w-full'>
-              <input type="department"  className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' placeholder='department' value={form.department} onChange={e => setform({ ...form, department: e.target.value })} />
+              <input type="text" placeholder='phone' className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.phone} onChange={e => setform({ ...form, phone: e.target.value })} />
             </div>
             <div className='relative w-full'>
-              <select value={form.role}  className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' onChange={e => setform({ ...form, role: e.target.value })} required>
+              <input type="department" className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' placeholder='department' value={form.department} onChange={e => setform({ ...form, department: e.target.value })} />
+            </div>
+            <div className='relative w-full'>
+              <select value={form.role} className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' onChange={e => setform({ ...form, role: e.target.value })} required>
                 <option value="">Select Role</option>
                 <option value="employee">employee</option>
                 <option value="security">security</option>
@@ -99,12 +136,12 @@ const AdminDashboard = () => {
           </form>
         </div>
         <div className='mt-24'>
-          <h2  className="justify-center flex items-center text-white font-bold text-3xl mb-8">Staff</h2>
+          <h2 className="justify-center flex items-center text-white font-bold text-3xl mb-8">Staff</h2>
           <div className='mx-auto px-4 max-w-7xl'>
             {Loading && staff && staff.length === 0 ? (
               <LoadingComponent />
             ) : staff && staff.length > 0 ? (
-              <div  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
                 {staff.map(staff => (
                   <div key={staff._id} className='border border-gray-600 rounded-2xl p-6 flex flex-col items-center gap-4 bg-gray-800'>
                     <div>
@@ -129,6 +166,7 @@ const AdminDashboard = () => {
                         <button onClick={() => toggleSwitch(staff._id)} className={`w-full bg-green-500 font-bold hover:bg-green-700 cursor-pointer p-3 rounded-xl ${staff && staff.isActive ? 'bg-red-600 hover:bg-red-800' : 'bg-green-600 hover:bg-green-800'} text-white transition`}>
                           {staff && staff.isActive ? 'Disable Access' : 'Enable Access'}
                         </button>
+                        <button onClick={()=>updateEmployee(staff)} className="w-full mt-2 bg-blue-600 hover:bg-blue-800 p-3 rounded-xl text-white">Edit Employee</button>
                       </div>
                     </div>
                   </div>
@@ -140,7 +178,7 @@ const AdminDashboard = () => {
           </div>
         </div>
         <div>
-          <h2  className="justify-center flex items-center text-white font-bold text-3xl mb-8">Visitors</h2>
+          <h2 className="justify-center flex items-center text-white font-bold text-3xl mb-8">Visitors</h2>
           <div className='mx-auto px-4 max-w-7xl'>
             {Loading && checkVisitor && checkVisitor.length === 0 ? (
               <LoadingComponent />
@@ -155,6 +193,7 @@ const AdminDashboard = () => {
 
                       <h3>{v.name}</h3>
                       <p>{v.email}</p>
+                      <p>{v.phone}</p>
                     </div>
                   </div>
                 ))}
