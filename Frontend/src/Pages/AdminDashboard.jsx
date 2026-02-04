@@ -69,15 +69,15 @@ const AdminDashboard = () => {
     }
   }
 
-  const editingStaff = async () => {
+  const editingStaff = (staffItem) => {
     try {
-      setEditStaff(staff._id);
+      setEditStaff(staffItem._id);
       setEditStafform({
-        name: staff.name || "",
-        email: staff.email || "",
-        phone: staff.phone || "",
-        department: staff.department || "",
-        role : staff.role || ""
+        name: staffItem.name || "",
+        email: staffItem.email || "",
+        phone: staffItem.phone || "",
+        department: staffItem.department || "",
+        role: staffItem.role || ""
       })
     }
     catch (error) {
@@ -85,16 +85,16 @@ const AdminDashboard = () => {
     }
   }
 
-  const updateEmployee = async(e)=>{
+  const updateEmployee = async (e) => {
     e.preventDefault();
-    try{
-      await api.patch(`/api/admin/employees/${editingStaff}`);
+    try {
+      await api.patch(`/api/admin/employees/${editStaff}`, editStafform);
       alert("Staff Updated Successfully");
       setEditStaff(null);
       loadData();
 
     }
-    catch(error){
+    catch (error) {
       seterror(error.response?.data?.message || "An error occured while confirming your edit")
     }
   }
@@ -121,7 +121,7 @@ const AdminDashboard = () => {
               <input type="text" placeholder='phone' className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.phone} onChange={e => setform({ ...form, phone: e.target.value })} />
             </div>
             <div className='relative w-full'>
-              <input type="department" className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' placeholder='department' value={form.department} onChange={e => setform({ ...form, department: e.target.value })} />
+              <input type="text" className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' placeholder='department' value={form.department} onChange={e => setform({ ...form, department: e.target.value })} />
             </div>
             <div className='relative w-full'>
               <select value={form.role} className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' onChange={e => setform({ ...form, role: e.target.value })} required>
@@ -131,7 +131,7 @@ const AdminDashboard = () => {
               </select>
             </div>
             <div className="mt-4">
-              <button className='mt-4 w-full p-5 py-3 rounded-xl border-none bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-[0_12px_30px_rgba(139,92,246,0.6)] hover:scale-[1.03] hover:shadow-[0_18px_45px_rgba(139,92,246,0.8)] transition-all'>Create Visitor</button>
+              <button className='mt-4 w-full p-5 py-3 rounded-xl border-none bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-[0_12px_30px_rgba(139,92,246,0.6)] hover:scale-[1.03] hover:shadow-[0_18px_45px_rgba(139,92,246,0.8)] transition-all'>Create Staff</button>
             </div>
           </form>
         </div>
@@ -166,7 +166,7 @@ const AdminDashboard = () => {
                         <button onClick={() => toggleSwitch(staff._id)} className={`w-full bg-green-500 font-bold hover:bg-green-700 cursor-pointer p-3 rounded-xl ${staff && staff.isActive ? 'bg-red-600 hover:bg-red-800' : 'bg-green-600 hover:bg-green-800'} text-white transition`}>
                           {staff && staff.isActive ? 'Disable Access' : 'Enable Access'}
                         </button>
-                        <button onClick={()=>updateEmployee(staff)} className="w-full mt-2 bg-blue-600 hover:bg-blue-800 p-3 rounded-xl text-white">Edit Employee</button>
+                        <button onClick={() => editingStaff(staff)} className="w-full mt-2 bg-blue-600 hover:bg-blue-800 p-3 rounded-xl text-white">Edit Employee</button>
                       </div>
                     </div>
                   </div>
