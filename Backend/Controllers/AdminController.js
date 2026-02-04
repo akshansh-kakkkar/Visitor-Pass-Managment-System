@@ -122,10 +122,13 @@ export const toggleStaff = async (req, res) => {
 
 export const EditStaff = async (req, res) => {
     try {
-        const updateUser = await User.findByIdAndUpdate(
-            id,
-            req.body,
-        )
+        const { id, ...updates } = req.body;
+        if (!id) {
+            return res.status(400).json({ message: 'Missing employee id' });
+        }
+
+        const updatedEmployee = await User.findByIdAndUpdate(id, updates, { new: true });
+
         if (!updatedEmployee) {
             return res.status(404).json({
                 message: "Employee not found"
