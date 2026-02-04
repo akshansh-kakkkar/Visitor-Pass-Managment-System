@@ -119,6 +119,40 @@ export const toggleStaff = async (req, res) => {
     }
 }
 
+export const updateVisitor = async (req, res) => {
+    try {
+        const { id, name, email } = req.body;
+        
+        if (!id) {
+            return res.status(400).json({
+                message: "Visitor ID is required"
+            });
+        }
+
+        const visitor = await Visitor.findById(id);
+        if (!visitor) {
+            return res.status(404).json({
+                message: "Visitor not found"
+            });
+        }
+
+        if (name) visitor.name = name;
+        if (email) visitor.email = email;
+
+        await visitor.save();
+
+        res.status(200).json({
+            message: "Visitor updated successfully",
+            visitor
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error updating visitor",
+            error: error.message
+        });
+    }
+}
+
 
 export const EditStaff = async (req, res) => {
     try {

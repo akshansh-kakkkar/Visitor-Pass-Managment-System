@@ -19,6 +19,11 @@ const AdminDashboard = () => {
     department: "",
     role: ""
   })
+  const [editVisitor, setEditVisitor] = useState(null)
+  const [editVisitorForm, setEditVisitorForm] = useState({
+    name: "",
+    email: ""
+  })
   const loadData = async () => {
     setLoading(true);
     try {
@@ -87,7 +92,7 @@ const AdminDashboard = () => {
 
   const updateEmployee = async (staffId) => {
     try {
-      await api.patch(`/api/admin/employees/${staffId}`, editStafform);
+      await api.patch(`/api/admin/edit-employees`, { id: staffId, ...editStafform });
       alert("Staff Updated Successfully");
       setEditStaff(null);
       loadData();
@@ -96,6 +101,7 @@ const AdminDashboard = () => {
       seterror(error.response?.data?.message || "An error occured while confirming your edit")
     }
   }
+  
   return (
     <>
       <div className='bg-black overflow-x-hidden text-white min-h-screen'>
@@ -155,7 +161,7 @@ const AdminDashboard = () => {
                           <div className='grid grid-cols-2 gap-4 mt-3'>
                             <div>
                               <p className='text-sm text-gray-300'>Role</p>
-                              <select value={editStafform.role}  onChange={e => setEditStafform({ ...editStafform, role: e.target.value })} className='w-full text-center px-2 py-2 rounded bg-gray-800 text-white'>
+                              <select value={editStafform.role} onChange={e => setEditStafform({ ...editStafform, role: e.target.value })} className='w-full text-center px-2 py-2 rounded bg-gray-800 text-white'>
                                 <option value="" className='text-center border-2 border-white'>Select Role</option>
                                 <option value="employee">employee</option>
                                 <option value="security">security</option>
@@ -215,10 +221,8 @@ const AdminDashboard = () => {
                       {v.name && v.name[0] ? v.name[0].toUpperCase() : ''}
                     </div>
                     <div className='font-semibold text-xl text-center '>
-
                       <h3>{v.name}</h3>
                       <p>{v.email}</p>
-                      <p>{v.phone}</p>
                     </div>
                   </div>
                 ))}
