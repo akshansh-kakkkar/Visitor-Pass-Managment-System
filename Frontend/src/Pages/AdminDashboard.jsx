@@ -85,14 +85,12 @@ const AdminDashboard = () => {
     }
   }
 
-  const updateEmployee = async (e) => {
-    e.preventDefault();
+  const updateEmployee = async (staffId) => {
     try {
-      await api.patch(`/api/admin/employees/${editStaff}`, editStafform);
+      await api.patch(`/api/admin/employees/${staffId}`, editStafform);
       alert("Staff Updated Successfully");
       setEditStaff(null);
       loadData();
-
     }
     catch (error) {
       seterror(error.response?.data?.message || "An error occured while confirming your edit")
@@ -149,25 +147,52 @@ const AdminDashboard = () => {
                         {staff.name && staff.name[0] ? staff.name[0].toUpperCase() : ''}
                       </div>
                     </div>
-                    <div className='flex-col flex items-center gap-2 text-center'>
-                      <div className="font-bold text-xl">
-                        <h3 className='text-gray-100'>{staff.name}</h3>
-                      </div>
-                      <div className='text-gray-400 text-sm'>
-                        <p>{staff.email}</p>
-                      </div>
-                      <div className='grid grid-cols-2 gap-4 mt-4 text-gray-300 text-sm'>
-                        <p >Role :</p>
-                        <p>{staff.role}</p>
-                        <p>Department :</p>
-                        <p>{staff.department || "N/A"}</p>
-                      </div>
-                      <div className='mt-4'>
-                        <button onClick={() => toggleSwitch(staff._id)} className={`w-full bg-green-500 font-bold hover:bg-green-700 cursor-pointer p-3 rounded-xl ${staff && staff.isActive ? 'bg-red-600 hover:bg-red-800' : 'bg-green-600 hover:bg-green-800'} text-white transition`}>
-                          {staff && staff.isActive ? 'Disable Access' : 'Enable Access'}
-                        </button>
-                        <button onClick={() => editingStaff(staff)} className="w-full mt-2 bg-blue-600 hover:bg-blue-800 p-3 rounded-xl text-white">Edit Employee</button>
-                      </div>
+                    <div className='flex-col flex items-center gap-2 text-center w-full'>
+                      {editStaff === staff._id ? (
+                        <>
+                          <input value={editStafform.name} onChange={e => setEditStafform({ ...editStafform, name: e.target.value })} className='w-full text-center px-3 py-2 rounded-lg bg-gray-800 text-white' />
+                          <input value={editStafform.email} onChange={e => setEditStafform({ ...editStafform, email: e.target.value })} className='w-full text-center px-3 py-2 rounded-lg bg-gray-800 text-white mt-2' />
+                          <div className='grid grid-cols-2 gap-4 mt-3'>
+                            <div>
+                              <p className='text-sm text-gray-300'>Role</p>
+                              <select value={editStafform.role}  onChange={e => setEditStafform({ ...editStafform, role: e.target.value })} className='w-full text-center px-2 py-2 rounded bg-gray-800 text-white'>
+                                <option value="" className='text-center border-2 border-white'>Select Role</option>
+                                <option value="employee">employee</option>
+                                <option value="security">security</option>
+                              </select>
+                            </div>
+                            <div>
+                              <p className='text-sm text-gray-300 text-center'>Department</p>
+                              <input value={editStafform.department} onChange={e => setEditStafform({ ...editStafform, department: e.target.value })} className='text-center w-full px-2 py-2 rounded bg-gray-800 text-white' />
+                            </div>
+                          </div>
+                          <div className='mt-4 w-full flex flex-col gap-2'>
+                            <button onClick={() => updateEmployee(staff._id)} className='w-full bg-green-600 hover:bg-green-800 p-3 rounded-xl text-white'>Save</button>
+                            <button onClick={() => setEditStaff(null)} className='w-full bg-red-600 hover:bg-red-800 p-3 rounded-xl text-white'>Cancel</button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="font-bold text-xl">
+                            <h3 className='text-gray-100'>{staff.name}</h3>
+                          </div>
+                          <div className='text-gray-400 text-sm'>
+                            <p>{staff.email}</p>
+                          </div>
+                          <div className='grid grid-cols-2 gap-4 mt-4 text-gray-300 text-sm'>
+                            <p >Role :</p>
+                            <p>{staff.role}</p>
+                            <p>Department :</p>
+                            <p>{staff.department || "N/A"}</p>
+                          </div>
+                          <div className='mt-4'>
+                            <button onClick={() => toggleSwitch(staff._id)} className={`w-full bg-green-500 font-bold hover:bg-green-700 cursor-pointer p-3 rounded-xl ${staff && staff.isActive ? 'bg-red-600 hover:bg-red-800' : 'bg-green-600 hover:bg-green-800'} text-white transition`}>
+                              {staff && staff.isActive ? 'Disable Access' : 'Enable Access'}
+                            </button>
+                            <button onClick={() => editingStaff(staff)} className="w-full mt-2 bg-blue-600 hover:bg-blue-800 p-3 rounded-xl text-white">Edit Employee</button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 ))}
