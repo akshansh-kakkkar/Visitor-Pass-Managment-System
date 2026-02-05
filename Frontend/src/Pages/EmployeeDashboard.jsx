@@ -9,14 +9,20 @@ const EmployeeDashboard = () => {
   const [action, setaction] = useState(null);
   const [open, setOpen] = useState(false)
   const [visitor, setVisitor] = useState([])
-  const [VisitorPassForm, setVisitorPassForm] = useState({ visitorId: "", date: "", time: "",purpose: ""})
+  const [form, setForm] = useState({ visitorId: "", date: "", time: "", purpose: "" })
+  
   const load = async () => {
     setLoading(true);
+    
     try {
-      const a = await api.get(`/api/visitor/my-appointments?t=${Date.now()}`);
-      setAppointment(a.data);
+      const [appointmentRes, visitorRes] = await Promise.all([
+        api.get(`/api/visitor/my-appointments?t=${Date.now()}`),
+        api.get(`/api/admin/all-visitors`)
+      ]);
+      setAppointment(appointmentRes.data);
+      setVisitor(visitorRes.data.visitor || []);
     } catch (err) {
-      console.error("Failed to load appointments", err);
+      console.error("Failed to load data", err);
     } finally {
       setLoading(false);
     }
@@ -41,12 +47,54 @@ const EmployeeDashboard = () => {
     }
   };
 
+  const CreatePass = async (e) => {
+    try {
+      e.preventDefault();
+      await api.post("/api/visitor/staff/handle-route/pass", form);
+      alert("Pass Created Successfully!");
+      setForm({ visitorId: "", date: "", time: "", purpose: "" });
+      load();
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to create pass");
+    }
+  }
+
   return (
     <>
       <div className='bg-black overflow-x-hidden text-white min-h-screen'>
         <EmployeeNavbar />
 
         <div>
+          </div>
+        <div className="flex justify-center mt-10">
+          <form onSubmit={CreatePass} className="relative  z-10 w-[340px] sm:w-[420px] items-center rounded-2xl p-8 border-t-5 border-t-purple-900 flex flex-col bg-gray-600 border-gray-800 border-2 gap-5">
+            <h2 className='text-center rounded-xl p-2 text-2xl font-bold  bg-gradient-to-r from-purple-600 to-indigo-600 '>Schedule Your Visit</h2>
+            <div className="relative w-full">
+              <select
+                className='w-full px-4 py-3 rounded-xl bg-gray-700 border border-white text-white placeholder-gray-400 outline-none focus:border-purple-500/60 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)]'
+                value={form.visitorId}
+                onChange={e => setForm({ ...form, visitorId: e.target.value })}
+                required
+              >
+                <option value="" className="bg-gray-700">Select Visitor</option>
+                {visitor.map(v => (
+                  <option key={v._id} value={v._id}>
+                    {v.name} {v.email ? `(${v.email})` : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="relative w-full">
+              <input type="date" className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} required />
+            </div>
+            <div className="relative w-full">
+              <input type="time" className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.time} onChange={e => setForm({ ...form, time: e.target.value })} required />
+            </div>
+            <div className="relative w-full">
+              <input placeholder="Purpose" className='w-full px-4 py-3 rounded-xl bg-gray-900 border text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.purpose} onChange={e => setForm({ ...form, purpose: e.target.value })} />
+            </div>
+            <button type="submit" className='mt-4 w-full py-3 rounded-xl border-none bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-[0_12px_30px_rgba(139,92,246,0.6)] hover:scale-[1.03] hover:shadow-[0_18px_45px_rgba(139,92,246,0.8)] transition-all'>Create Pass</button>
+          </form>
         </div>
         <h2 className='flex justify-center items-center text-white font-bold text-3xl mt-12  mb-8'>Visitor Requests</h2>
         <div className="max-w-7xl mx-auto px-4 pb-20">

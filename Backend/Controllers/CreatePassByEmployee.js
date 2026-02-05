@@ -1,67 +1,70 @@
-import Appointment from "../Models/AppointmentModel";
+import Appointment from "../Models/AppointmentModel.js";
 import Visitor from "../Models/VisitorUser.js";
-import QrCode from "qrcode";
+import QRCode from "qrcode";
 import fs from "fs";
-import Pass from "../Models/PassModel.js";
+import PassModel from "../Models/PassModel.js";
 import generatePdf from "../Utils/Pdf_generator.js";
-import SendEmail, { sendPassEmail } from "../Utils/Email.js";
+import { sendPassEmail } from "../Utils/Email.js";
 
-export default CreatePassByEmployee = async (req, res) => {
+const CreatePassByEmployee = async (req, res) => {
     try {
-        const { VisitorId, date, time, purpose } = req.body;
-        let visitor = await Visitor.findById({ VisitorId });
+        const { visitorId, date, time, purpose } = req.body;
+        
+        const visitor = await Visitor.findById(visitorId);
         if (!visitor) {
-            res.status(404).json({
+            return res.status(404).json({
                 message: "Visitor not found."
-            })
+            });
         }
-        const appointment = Appointment.create({
+
+        const appointment = await Appointment.create({
             visitor: visitor._id,
             host: req.user._id,
             date,
             time,
             purpose,
             status: "approved"
-        })
-        const qrCodeData = `Pass-${appointment._id}`
+        });
+
+        const qrCodeData = `Pass-${appointment._id}`;
         const qrCode = await QRCode.toDataURL(qrCodeData);
 
         if (!fs.existsSync("uploads")) {
-            fs.mkdirSync("uploads")
+            fs.mkdirSync("uploads");
         }
-        const QrPath = `uploads/${appointment._id}.png`;
-        await qrCode.toFile(QrPath, qrCodeData);
 
-        const PDFPath = await generatePdf(visitor, appointment, QrPath);
+        const qrPath = `uploads/${appointment._id}.png`;
+        await QRCode.toFile(qrPath, qrCodeData);
+
+        const pdfPath = await generatePdf(visitor, appointment, qrPath);
+
         if (visitor.email && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
             try {
-                await sendPassEmail(visitor.email, PDFPath);
-            }
-            catch (error) {
-                res.status(401).json({
-                    message: "Email failed to sent!"
-                })
+                await sendPassEmail(visitor.email, pdfPath);
+            } catch (emailError) {
+                console.log("Email sending failed:", emailError.message);
             }
         }
-        const Pass = Pass.create({
+
+        const pass = await PassModel.create({
             visitor: visitor._id,
             appointment: appointment._id,
             qrCode,
-            PDFPath: PDFPath,
+            pdfPath: pdfPath,
             validFrom: new Date(),
             validTill: new Date(Date.now() + 8 * 60 * 60 * 1000)
         });
 
-
         res.status(201).json({
             message: "Pass created successfully",
             appointment,
-            Pass
+            pass
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
         });
     }
-    catch (error) {
-        res.status(501).json({
-            message: error.message
-        })
-    }
-}
+};
+
+export default CreatePassByEmployee;
