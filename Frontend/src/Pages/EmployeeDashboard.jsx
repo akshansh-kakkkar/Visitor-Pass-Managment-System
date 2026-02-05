@@ -10,18 +10,21 @@ const EmployeeDashboard = () => {
   const [action, setaction] = useState(null);
   const [open, setOpen] = useState(false)
   const [visitor, setVisitor] = useState([])
+  const [checkLogs, setCheckLogs] = useState([])
   const [form, setForm] = useState({ visitorId: "", date: "", time: "", purpose: "" })
 
   const load = async () => {
     setLoading(true);
     
     try {
-      const [appointmentRes, visitorRes] = await Promise.all([
+      const [appointmentRes, visitorRes, logsRes] = await Promise.all([
         api.get(`/api/visitor/my-appointments?t=${Date.now()}`),
-        api.get(`/api/admin/all-visitors`)
+        api.get(`/api/admin/all-visitors`),
+        api.get(`/api/security/check-logs`).catch(() => ({ data: [] }))
       ]);
       setAppointment(appointmentRes.data);
       setVisitor(visitorRes.data.visitor || []);
+      setCheckLogs(logsRes.data || []);
     } catch (err) {
       console.error("Failed to load data", err);
     } finally {
@@ -154,6 +157,16 @@ const EmployeeDashboard = () => {
                       {a.status}
                     </span>
                   </div>
+                  {
+                    a.status === 'approved' && (()=>{
+                      const logged = checkLogs.find(log => log.pass?.appointment?._id === a._id || log.pass?.appointment === a._id);
+                      return logged ? (
+                        <div className='text-white'>
+                          <p>{logged.checkOutTime ? "Visitor is Outside the organisation" : "visitor is Inside the organisation"}</p>
+                        </div>
+                      ) : null
+                    })
+                  }
                   {a.status === "pending" && (
                     <div className="flex gap-4 w-full pt-4">
                       <button
