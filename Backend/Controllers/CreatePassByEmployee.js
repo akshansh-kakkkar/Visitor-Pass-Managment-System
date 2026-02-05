@@ -46,16 +46,22 @@ const CreatePassByEmployee = async (req, res) => {
             validFrom: new Date(),
             validTill: new Date(Date.now() + 8 * 60 * 60 * 1000)
         });
+        let emailSent = false;
         if (visitor.email && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-            sendPassEmail(visitor.email, pdfPath).catch(emailError => {
-                console.error("Email sending failed:", emailError.message);
-            });
+            try {
+                await sendPassEmail(visitor.email, pdfPath);
+                emailSent = true;
+                console.log("Email sent successfully!");
+            } catch (emailError) {
+                console.error("Email sending failed with error:", emailError);
+                console.error("Error details:", emailError.message);
+            }
         }
-
         res.status(201).json({
-            message: "Pass created successfully",
+            message: emailSent ? "Pass created and email sent successfully" : "Pass created successfully but email failed to send",
             appointment,
-            pass
+            pass,
+            emailSent
         });
     } catch (error) {
         res.status(500).json({
