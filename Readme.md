@@ -37,8 +37,4 @@ A modern Pass Management System for security managment
 ## Credits
 # LordIcon
 
-### Loom Recording : https://www.loom.com/share/195b1e21866d4e6a84f1727f14d0d446
-
-### Updated Admin dashboard UI recording : https://drive.google.com/file/d/1uvdzbS6XqHFWvdGxqbMC930_cFNdVWyB/view?usp=drive_link 	
-
-
+#### Video Recording : https://drive.google.com/file/d/16gR_-zoZB4ba_gvecsECPJ-DaF_Y4pM7/view?usp=sharing
