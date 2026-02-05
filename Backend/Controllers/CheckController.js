@@ -17,11 +17,11 @@ const scanQR = async (req, res) => {
 
         const existingLog = await CheckLog.findOne({
             pass: pass._id,
-            checkOutTime: null 
+            checkOutTime: null
         });
 
         if (existingLog) {
-          
+
             existingLog.checkOutTime = new Date();
             await existingLog.save();
 
@@ -30,10 +30,11 @@ const scanQR = async (req, res) => {
 
             return res.status(200).json({
                 message: "Visitor checked out successfully",
+                type: "checkout",
                 log: existingLog
             });
         } else {
-      
+
             const log = await CheckLog.create({
                 pass: pass._id,
                 security: req.user._id,
@@ -43,7 +44,7 @@ const scanQR = async (req, res) => {
 
             return res.status(201).json({
                 message: "Visitor checked in successfully",
-                log
+                type: 'checkIn',
             });
         }
     } catch (error) {
@@ -54,4 +55,4 @@ const scanQR = async (req, res) => {
     }
 }
 
-export default scanQR
+export default scanQR;

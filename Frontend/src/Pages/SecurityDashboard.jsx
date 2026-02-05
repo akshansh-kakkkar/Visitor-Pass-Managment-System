@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
-
+import api from "../api/api";
 import SecurityNav from "../Components/SecurityNav";
 import BgGlow2 from "../Components/BgGlow2";
 
 const SecurityDashboard = () => {
-
+  const [setscanningType, setSetscanningType] = useState("")
   const [isScanning, setIsScanning] = useState(false);
   const [result, setResult] = useState("");
   const [error, setError] = useState("");
@@ -27,8 +27,16 @@ const SecurityDashboard = () => {
               fps: 10,
               qrbox: 250
             },
-            (decodedText) => {
-              setResult(decodedText);
+            async (decodedText)=>{
+              try{
+                setResult(decodedText);
+                const res = await api.post("/api/security/scanqr", {qrData : decodedText});
+                setscanningType(res.data.type);
+                alert(res.data.message);
+                setIsScanning(false)
+              }catch(error){
+                alert(error.response?.data?.message || "scan failed")
+              }
             },
             () => {}
           );
@@ -73,7 +81,13 @@ const SecurityDashboard = () => {
           {error}
         </p>
       )}
-
+      {
+        setscanningType && (
+          <p className="text-white  text-center mt-4 ">
+            {setscanningType === "checkIn" ? "Visitor Checked In Successfully!" : "Visitor CheckedOut Successfully!"}
+          </p>
+        )
+      }
     </div>
   );
 };

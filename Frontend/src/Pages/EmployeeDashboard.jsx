@@ -11,7 +11,7 @@ const EmployeeDashboard = () => {
   const [open, setOpen] = useState(false)
   const [visitor, setVisitor] = useState([])
   const [form, setForm] = useState({ visitorId: "", date: "", time: "", purpose: "" })
-  
+
   const load = async () => {
     setLoading(true);
     
@@ -31,6 +31,8 @@ const EmployeeDashboard = () => {
 
   useEffect(() => {
     load();
+    const Interval = setInterval(load, 15000)
+    return () => clearInterval(Interval)
   }, []);
 
   const Action = async (id, type) => {
@@ -63,13 +65,14 @@ const EmployeeDashboard = () => {
     }
   }
 
+
   return (
     <>
       <div className='bg-black overflow-x-hidden text-white min-h-screen'>
         <EmployeeNavbar />
 
         <div>
-          </div>
+        </div>
         <div className="flex justify-center mt-10">
           <form onSubmit={CreatePass} className="relative  z-10 w-[340px] sm:w-[420px] items-center rounded-2xl p-8 border-t-5 border-t-purple-900 flex flex-col bg-gray-600 border-gray-800 border-2 gap-5">
             <h2 className='text-center rounded-xl p-2 text-2xl font-bold  bg-gradient-to-r from-purple-600 to-indigo-600 '>Schedule Your Visit</h2>
@@ -97,8 +100,8 @@ const EmployeeDashboard = () => {
             <div className="relative w-full">
               <input placeholder="Purpose" className='w-full px-4 py-3 rounded-xl bg-gray-900 border text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.purpose} onChange={e => setForm({ ...form, purpose: e.target.value })} />
             </div>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={creating}
               className='mt-4 w-full py-3 rounded-xl border-none bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium'
             >
@@ -182,4 +185,4 @@ const EmployeeDashboard = () => {
   )
 }
 
-export default EmployeeDashboard
+export default EmployeeDashboard;
