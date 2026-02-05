@@ -10,6 +10,7 @@ import AppointmentRoutes from './Routes/AppointmentRoutes.js';
 import PassRoutes from './Routes/PassRoutes.js';
 import CheckLog from './Routes/CheckLogRoutes.js';
 import ViewPass from './Routes/ViewPassRoutes.js';
+import DownloadPassRoutes from './Routes/DownloadPassRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -29,6 +30,7 @@ app.use('/api/visitor', AppointmentRoutes);
 app.use('/api/visitor', PassRoutes);
 app.use('/api/security', CheckLog);
 app.use('/visitor', ViewPass);
+app.use('/api/download-pass', DownloadPassRoutes);
 app.use("/passes", express.static(path.join(dirname, "passes")));
 
 mongoose.connect(process.env.MONGO_URI).then(() => {
