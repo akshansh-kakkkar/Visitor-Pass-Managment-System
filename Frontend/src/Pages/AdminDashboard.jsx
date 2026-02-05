@@ -5,25 +5,15 @@ import LoadingComponent from "../Components/LoadingComponent.jsx"
 import BgGlow2 from '../Components/BgGlow2.jsx';
 const AdminDashboard = () => {
   const [Loading, setLoading] = useState(null);
-  const [form, setform] = useState({
-    name: "", email: "", password: "", phone: "", department: "", role: ""
-  });
+  const [form, setform] = useState({name: "", email: "", password: "", phone: "", department: "", role: ""});
   const [checkVisitor, setCheckVisitor] = useState([]);
   const [error, seterror] = useState("");
   const [staff, setStaff] = useState([])
   const [editStaff, setEditStaff] = useState(null)
-  const [editStafform, setEditStafform] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    department: "",
-    role: ""
-  })
-  const [editVisitor, setEditVisitor] = useState(null)
-  const [editVisitorForm, setEditVisitorForm] = useState({
-    name: "",
-    email: ""
-  })
+  const [editStafform, setEditStafform] = useState({name: "", email: "", phone: "", department: "", role: ""})
+  const [editVisitor, setEditVisitor] = useState(null);
+  const [editVisitorForm, setEditVisitorForm] = useState({name : "", email : "", phone : ""})
+
   const loadData = async () => {
     setLoading(true);
     try {
@@ -101,7 +91,33 @@ const AdminDashboard = () => {
       seterror(error.response?.data?.message || "An error occured while confirming your edit")
     }
   }
-  
+
+    const editingVisitor = (VisitorItem) => {
+    try {
+      setEditVisitor(VisitorItem._id);
+      setEditVisitorForm({
+        name: VisitorItem.name || "",
+        email: VisitorItem.email || "",
+        phone: VisitorItem.phone || "",
+      })
+    }
+    catch (error) {
+      seterror(error.response?.data?.message || "An Error Occured while editing the Visitor")
+    }
+  }
+
+  const updateVisitor = async (visitorId) => {
+    try {
+      await api.patch(`/api/admin/edit-visitor`, { id: visitorId, ...editVisitorForm });
+      alert("Visitor Updated Successfully");
+      setEditVisitor(null);
+      loadData();
+    }
+    catch (error) {
+      seterror(error.response?.data?.message || "An error occured while confirming your edit")
+    }
+  }
+
   return (
     <>
       <div className='bg-black overflow-x-hidden text-white min-h-screen'>
@@ -173,7 +189,7 @@ const AdminDashboard = () => {
                             </div>
                           </div>
                           <div className='mt-4 w-full flex flex-col gap-2'>
-                            <button onClick={() => updateEmployee(staff._id)} className='w-full bg-green-600 hover:bg-green-800 p-3 rounded-xl text-white'>Save</button>
+                            <button onClick={() => updateEmployee(staff._id)} className='w-full bg-green-600 hover:bg-green-800 p-3 rounded-xl text-white'>Update</button>
                             <button onClick={() => setEditStaff(null)} className='w-full bg-red-600 hover:bg-red-800 p-3 rounded-xl text-white'>Cancel</button>
                           </div>
                         </>
@@ -208,27 +224,50 @@ const AdminDashboard = () => {
             )}
           </div>
         </div>
-        <div>
+                <div className='mt-24'>
           <h2 className="justify-center flex items-center text-white font-bold text-3xl mb-8">Visitors</h2>
           <div className='mx-auto px-4 max-w-7xl'>
             {Loading && checkVisitor && checkVisitor.length === 0 ? (
               <LoadingComponent />
             ) : checkVisitor && checkVisitor.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
-                {checkVisitor.map(v => (
-                  <div key={v._id} className='border border-gray-600 rounded-2xl p-6 flex flex-col items-center gap-4 bg-gray-800'>
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-2xl shadow-lg">
-                      {v.name && v.name[0] ? v.name[0].toUpperCase() : ''}
+                {checkVisitor.map(checkVisitor => (
+                  <div key={checkVisitor._id} className='border border-gray-600 rounded-2xl p-6 flex flex-col items-center gap-4 bg-gray-800'>
+                    <div>
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-2xl shadow-lg">
+                        {checkVisitor.name && checkVisitor.name[0] ? checkVisitor.name[0].toUpperCase() : ''}
+                      </div>
                     </div>
-                    <div className='font-semibold text-xl text-center '>
-                      <h3>{v.name}</h3>
-                      <p>{v.email}</p>
+                    <div className='flex-col flex items-center gap-2 text-center w-full'>
+                      {editVisitor === checkVisitor._id ? (
+                        <>
+                          <input value={editVisitorForm.name} onChange={e => setEditVisitorForm({ ...editVisitorForm, name: e.target.value })} className='w-full text-center px-3 py-2 rounded-lg bg-gray-800 text-white' />
+                          <input value={editVisitorForm.email} onChange={e => setEditVisitorForm({ ...editVisitorForm, email: e.target.value })} className='w-full text-center px-3 py-2 rounded-lg bg-gray-800 text-white mt-2' />
+
+                          <div className='mt-4 w-full flex flex-col gap-2'>
+                            <button onClick={() => updateVisitor(checkVisitor._id)} className='w-full bg-green-600 hover:bg-green-800 p-3 rounded-xl text-white'>Update</button>
+                            <button onClick={() => setEditVisitor(null)} className='w-full bg-red-600 hover:bg-red-800 p-3 rounded-xl text-white'>Cancel</button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="font-bold text-xl">
+                            <h3 className='text-gray-100'>{checkVisitor.name}</h3>
+                          </div>
+                          <div className='text-gray-400 text-sm'>
+                            <p>{checkVisitor.email}</p>
+                          </div>
+                          <div className='mt-4'>
+                            <button onClick={() => editingVisitor(checkVisitor)} className="w-full mt-2 bg-blue-600 hover:bg-blue-800 p-3 rounded-xl text-white">Edit Employee</button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div>No Registered Visitors Found</div>
+              <p className='text-4xl flex justify-center '>No visitor Found</p>
             )}
           </div>
         </div>
