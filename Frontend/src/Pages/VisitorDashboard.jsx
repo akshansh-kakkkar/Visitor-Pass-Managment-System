@@ -23,10 +23,10 @@ const VisitorDashboard = () => {
         api.get("/api/admin/employees"),
         api.get("/api/visitor/my-appointments"),
         api.get('/visitor/my').catch(() => ({ data: [] })),
-        api.get("api/security/scanqr")
+        api.get("/api/security/scanqr").catch(() => ({ data: [] }))
       ]);
-      setLogs(LogRes || [])
-      setEmployees(emp.data);
+      setLogs(LogRes.data || [])
+      setEmployees(emp.data || []);
       setAppointments(app.data);
       setPasses(Array.isArray(passRes.data) ? passRes.data : []);
     } catch (error) {
