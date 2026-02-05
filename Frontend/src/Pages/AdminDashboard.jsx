@@ -108,7 +108,7 @@ const AdminDashboard = () => {
 
   const updateVisitor = async (visitorId) => {
     try {
-      await api.patch(`/api/admin/edit-visitor`, { id: visitorId, ...editVisitorForm });
+      await api.patch(`/api/admin/update-visitor`, { id: visitorId, ...editVisitorForm });
       alert("Visitor Updated Successfully");
       setEditVisitor(null);
       loadData();
@@ -258,7 +258,7 @@ const AdminDashboard = () => {
                             <p>{checkVisitor.email}</p>
                           </div>
                           <div className='mt-4'>
-                            <button onClick={() => editingVisitor(checkVisitor)} className="w-full mt-2 bg-blue-600 hover:bg-blue-800 p-3 rounded-xl text-white">Edit Employee</button>
+                            <button onClick={() => editingVisitor(checkVisitor)} className="w-full mt-2 bg-blue-600 hover:bg-blue-800 p-3 rounded-xl text-white">Edit Visitor</button>
                           </div>
                         </>
                       )}
