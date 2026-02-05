@@ -36,16 +36,6 @@ const CreatePassByEmployee = async (req, res) => {
         const qrPath = `uploads/${appointment._id}.png`;
         await QRCode.toFile(qrPath, qrCodeData);
 
-        const pdfPath = await generatePdf(visitor, appointment, qrPath);
-
-        if (visitor.email && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-            try {
-                await sendPassEmail(visitor.email, pdfPath);
-            } catch (emailError) {
-                console.log("Email sending failed:", emailError.message);
-            }
-        }
-
         const pass = await PassModel.create({
             visitor: visitor._id,
             appointment: appointment._id,
@@ -54,7 +44,13 @@ const CreatePassByEmployee = async (req, res) => {
             validFrom: new Date(),
             validTill: new Date(Date.now() + 8 * 60 * 60 * 1000)
         });
-
+        if (visitor.email && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+            sendPassEmail(visitor.email, pdfPath)
+            
+            .catch(emailError => {
+                console.log("Email sending failed:", emailError.message);
+            });
+        }
         res.status(201).json({
             message: "Pass created successfully",
             appointment,

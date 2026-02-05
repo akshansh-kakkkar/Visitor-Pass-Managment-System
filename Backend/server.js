@@ -24,8 +24,7 @@ app.use('/api/visitor', AppointmentRoutes);
 app.use('/api/visitor', PassRoutes);
 app.use('/api/security', CheckLog);
 app.use('/visitor', ViewPass)
-
-
+app.use('/passes', express.static('passes'));
 mongoose.connect(process.env.MONGO_URI).then(() => {
     console.log('mongodb database is connected');
 }).catch((err) => {

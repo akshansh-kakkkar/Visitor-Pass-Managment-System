@@ -6,6 +6,7 @@ import EmployeeNavbar from '../Components/EmployeeNavbar'
 const EmployeeDashboard = () => {
   const [appointment, setAppointment] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [action, setaction] = useState(null);
   const [open, setOpen] = useState(false)
   const [visitor, setVisitor] = useState([])
@@ -50,12 +51,15 @@ const EmployeeDashboard = () => {
   const CreatePass = async (e) => {
     try {
       e.preventDefault();
+      setCreating(true);
       await api.post("/api/visitor/staff/handle-route/pass", form);
       alert("Pass Created Successfully!");
       setForm({ visitorId: "", date: "", time: "", purpose: "" });
       load();
     } catch (err) {
       alert(err.response?.data?.message || "Failed to create pass");
+    } finally {
+      setCreating(false);
     }
   }
 
@@ -93,7 +97,13 @@ const EmployeeDashboard = () => {
             <div className="relative w-full">
               <input placeholder="Purpose" className='w-full px-4 py-3 rounded-xl bg-gray-900 border text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.purpose} onChange={e => setForm({ ...form, purpose: e.target.value })} />
             </div>
-            <button type="submit" className='mt-4 w-full py-3 rounded-xl border-none bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-[0_12px_30px_rgba(139,92,246,0.6)] hover:scale-[1.03] hover:shadow-[0_18px_45px_rgba(139,92,246,0.8)] transition-all'>Create Pass</button>
+            <button 
+              type="submit" 
+              disabled={creating}
+              className='mt-4 w-full py-3 rounded-xl border-none bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium'
+            >
+              {creating ? 'Creating Pass...' : 'Create Pass'}
+            </button>
           </form>
         </div>
         <h2 className='flex justify-center items-center text-white font-bold text-3xl mt-12  mb-8'>Visitor Requests</h2>
@@ -104,8 +114,8 @@ const EmployeeDashboard = () => {
             </div>
           ) : appointment.length > 0 ? (
             appointment.map(a => (
-              <div className="justify-center flex items-center content-center text-center mb-10 overflow-hidden">
-                <div key={a._id} className="relative z-10 w-full max-w-[600px] items-center rounded-2xl p-8 border-t-5 border-t-purple-900 flex flex-col  border-gray-600 border-2 gap-6 backdrop-blur-2xl ">
+              <div key={a._id} className="justify-center flex items-center content-center text-center mb-10 overflow-hidden">
+                <div className="relative z-10 w-full max-w-[600px] items-center rounded-2xl p-8 border-t-5 border-t-purple-900 flex flex-col  border-gray-600 border-2 gap-6 backdrop-blur-2xl ">
 
                   <div className="w-full flex flex-col items-center gap-4">
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-2xl shadow-lg">
