@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import api from "../api/api";
 import SecurityNav from "../Components/SecurityNav";
@@ -7,12 +7,15 @@ import BgGlow2 from "../Components/BgGlow2";
 const SecurityDashboard = () => {
   const [scanningType, setScanningType] = useState("")
   const [isScanning, setIsScanning] = useState(false);
-  const [result, setResult] = useState("Scanned Successfully");
+  const [result, setResult] = useState("");
   const [error, setError] = useState("");
   const [creating, setCreating] = useState(false);
   const [visitor, setVisitor] = useState([]);
   const [form, setForm] = useState({ visitorId: "", date: "", time: "", purpose: "" });
   const [scannedAppointment, setScannedAppointment] = useState(null);
+
+  const scannerRef = useRef(null);
+  const isProcessingRef = useRef(false);
 
   const load = async () => {
     try {
@@ -27,48 +30,92 @@ const SecurityDashboard = () => {
     load();
   }, []);
 
+  const startScanner = async () => {
+    setError("");
+    setResult("");
+    setScanningType("");
+    setScannedAppointment(null);
+    isProcessingRef.current = false;
+    if (scannerRef.current) {
+      try {
+        await scannerRef.current.stop();
+      } catch (e) {
+      }
+      scannerRef.current = null;
+    }
+    const readerEl = document.getElementById("reader");
+    if (readerEl) {
+      readerEl.innerHTML = "";
+    }
+
+    try {
+      const qr = new Html5Qrcode("reader");
+      scannerRef.current = qr;
+
+      const devices = await Html5Qrcode.getCameras();
+      if (!devices || devices.length === 0) {
+        setError("No cameras found");
+        setIsScanning(false);
+        return;
+      }
+
+      await qr.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        async (decodedText) => {
+          if (isProcessingRef.current) return;
+          isProcessingRef.current = true;
+          try {
+            await qr.stop();
+            scannerRef.current = null;
+            setResult(decodedText);
+
+            const res = await api.post("/api/security/scanqr", { qrData: decodedText });
+            setScanningType(res.data.type);
+            setScannedAppointment(res.data.appointment);
+            alert(res.data.message);
+          } catch (error) {
+            alert(error.response?.data?.message || "Scan failed");
+          } finally {
+            setIsScanning(false);
+            isProcessingRef.current = false;
+          }
+        },
+        () => { }
+      );
+    } catch (err) {
+      console.error("Scanner start error:", err);
+      setError("Failed to start camera. Please allow camera permission.");
+      setIsScanning(false);
+    }
+  };
+
+  const stopScanner = async () => {
+    if (scannerRef.current) {
+      try {
+        await scannerRef.current.stop();
+      } catch (e) {
+      }
+      scannerRef.current = null;
+    }
+    const readerEl = document.getElementById("reader");
+    if (readerEl) {
+      readerEl.innerHTML = "";
+    }
+    setIsScanning(false);
+  };
+
   useEffect(() => {
-
-    if (!isScanning) return;
-
-    const qr = new Html5Qrcode("reader");
-
-    Html5Qrcode.getCameras()
-      .then(devices => {
-
-        if (devices && devices.length) {
-
-          qr.start(
-            { facingMode: "environment" },
-            {
-              fps: 10,
-              qrbox: 250
-            },
-            async (decodedText) => {
-              try {
-                await qr.stop();
-                setResult(decodedText);
-                const res = await api.post("/api/security/scanqr", { qrData: decodedText });
-                setScanningType(res.data.type);
-                setScannedAppointment(res.data.appointment);
-                alert(res.data.message);
-                setIsScanning(false)
-              } catch (error) {
-                alert(error.response?.data?.message || "scan failed")
-              }
-            },
-            () => { }
-          );
-
-        }
-
-      })
-      .catch(err => setError("Camera Error"));
+    if (isScanning) {
+      startScanner();
+    }
 
     return () => {
-      qr.stop().catch(() => { });
+      if (scannerRef.current) {
+        scannerRef.current.stop().catch(() => { });
+        scannerRef.current = null;
+      }
     };
-
   }, [isScanning]);
 
   const CreatePass = async (e) => {
@@ -85,6 +132,7 @@ const SecurityDashboard = () => {
       setCreating(false);
     }
   }
+
   return (
     <div className="min-h-screen bg-black text-white">
       <SecurityNav />
@@ -125,21 +173,21 @@ const SecurityDashboard = () => {
           </button>
         </form>
       </div>
-      <div id="reader" style={{ width: "300px", margin: "auto", border:"2px solid white"}}  />
+      <div id="reader" style={{ width: "300px", margin: "auto", border: isScanning ? "2px solid white" : "none" }} />
 
       <div className="flex gap-4 justify-center mt-6 ">
-        <button onClick={() => setIsScanning(true)} className="bg-green-600 rounded-xl p-2">
+        <button onClick={() => setIsScanning(true)} disabled={isScanning} className="bg-green-600 rounded-xl p-2 disabled:opacity-50">
           Scan Now
         </button>
 
-        <button onClick={() => setIsScanning(false)}  className="bg-red-600 rounded-xl p-2">
+        <button onClick={stopScanner} disabled={!isScanning} className="bg-red-600 rounded-xl p-2 disabled:opacity-50">
           Stop Scan
         </button>
       </div>
 
       {result && (
         <p className="text-green-400 text-center mt-4">
-          {result}
+          Scanned: {result}
         </p>
       )}
 
@@ -151,22 +199,22 @@ const SecurityDashboard = () => {
       {
         scanningType && (
           <p className="text-white  text-center mt-4 ">
-            {scanningType === "checkIn" ? "Visitor Checked In Successfully!" : "Visitor CheckedOut Successfully!"}
+            {scanningType === "checkIn" ? "Visitor Checked In Successfully!" : "Visitor Checked Out Successfully!"}
           </p>
         )
       }
-      
+
       {scannedAppointment && (
         <div className="flex justify-center mt-8">
           <div className="relative z-10 w-[340px] sm:w-[420px] rounded-2xl p-8 border-t-5 border-t-purple-900 bg-gray-800 border-2 gap-5">
             <h3 className="text-2xl font-bold text-center mb-4 bg-gradient-to-r from-purple-600 to-indigo-600 p-3 rounded-xl">
               Visitor Information
             </h3>
-            {scannedAppointment.photo && (
+            {scannedAppointment.photo && scannedAppointment.photo.startsWith("data:") && (
               <div className="flex justify-center mb-4">
-                <img 
-                  src={scannedAppointment.photo} 
-                  alt="Visitor Photo" 
+                <img
+                  src={scannedAppointment.photo}
+                  alt="Visitor Photo"
                   className="w-48 h-48 object-cover rounded-xl border-4 border-purple-500"
                 />
               </div>
