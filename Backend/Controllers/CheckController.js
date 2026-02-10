@@ -61,4 +61,22 @@ const scanQR = async (req, res) => {
     }
 }
 
+export const getAllCheckLogs = async (req, res) => {
+    try {
+        const logs = await CheckLog.find()
+            .populate({
+                path: 'pass',
+                populate: { path: 'appointment' }
+            })
+            .sort({ checkInTime: -1 });
+
+        res.status(200).json(logs);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: error.message,
+        });
+    }
+}
+
 export default scanQR;

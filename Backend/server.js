@@ -29,9 +29,14 @@ app.use('/api/visitor', VisitorRoutes);
 app.use('/api/visitor', AppointmentRoutes);
 app.use('/api/visitor', PassRoutes);
 app.use('/api/security', CheckLog);
+<<<<<<< HEAD
 app.use('/visitor', ViewPass);
 app.use('/api/download-pass', DownloadPassRoutes);
 app.use("/passes", express.static(path.join(dirname, "passes")));
+=======
+app.use('/visitor', ViewPass)
+app.use('/uploads', express.static('uploads'))
+>>>>>>> ebb1d09 (photo feature ready)
 
 mongoose.connect(process.env.MONGO_URI).then(() => {
     console.log('mongodb database is connected');
