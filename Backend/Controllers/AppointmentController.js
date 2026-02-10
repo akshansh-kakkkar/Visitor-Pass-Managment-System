@@ -4,6 +4,11 @@ import Appointment from "../Models/AppointmentModel.js";
 
 export const createAppointment = async (req, res) => {
     try {
+        if(!req.file){
+            return res.status(400).json({
+                message : "File is required"
+            })
+        }
         const { hostId, date, time, purpose } = req.body;
 
         const appointment = await Appointment.create({
@@ -12,6 +17,7 @@ export const createAppointment = async (req, res) => {
             date,
             time,
             purpose,
+            photo : req.file.path,
             status: "pending"
         })
         res.status(201).json(appointment)

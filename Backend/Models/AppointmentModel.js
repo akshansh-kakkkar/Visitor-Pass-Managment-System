@@ -29,6 +29,10 @@ const AppointmentSchema = new Schema({
         default: 'pending',
         type: String,
     },
+    photo : {
+        type : String,
+        required : true
+    }
 
 }, { timestamps: true }
 
