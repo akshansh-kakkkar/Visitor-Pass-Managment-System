@@ -7,7 +7,11 @@ const scanQR = async (req, res) => {
 
         const appointmentId = qrData.replace('Pass-', "")
 
-        const pass = await Pass.findOne({ appointment: appointmentId, isActive: true });
+        const pass = await Pass.findOne({ appointment: appointmentId, isActive: true })
+            .populate({
+                path: 'appointment',
+                populate: { path: 'visitor host' }
+            });
 
         if (!pass) {
             return res.status(400).json({
@@ -31,7 +35,8 @@ const scanQR = async (req, res) => {
             return res.status(200).json({
                 message: "Visitor checked out successfully",
                 type: "checkout",
-                log: existingLog
+                log: existingLog,
+                appointment: pass.appointment
             });
         } else {
 
@@ -45,6 +50,7 @@ const scanQR = async (req, res) => {
             return res.status(201).json({
                 message: "Visitor checked in successfully",
                 type: 'checkIn',
+                appointment: pass.appointment
             });
         }
     } catch (error) {

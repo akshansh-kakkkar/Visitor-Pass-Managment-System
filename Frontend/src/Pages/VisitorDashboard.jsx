@@ -10,6 +10,7 @@ const VisitorDashboard = () => {
   const [passes, setPasses] = useState([])
   const [loading, setLoading] = useState(false)
   const [logs, setLogs] = useState([])
+  const [photo, setPhoto] = useState(null)
   const [form, setForm] = useState({
     hostId: "",
     date: "",
@@ -36,17 +37,35 @@ const VisitorDashboard = () => {
 
   const submit = async (e) => {
     e.preventDefault();
+    if (!photo) {
+      alert("Please upload a photo");
+      return;
+    }
+    
     try {
-      setLoading(true)
-      await api.post("/api/visitor/create-appointment", form);
+      setLoading(true);
+      
+      // Convert photo to base64
+      const reader = new FileReader();
+      const base64Photo = await new Promise((resolve, reject) => {
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(photo);
+      });
+      
+      await api.post("/api/visitor/create-appointment", {
+        ...form,
+        photo: base64Photo
+      });
+      
       alert("Appointment requested");
       setForm({ hostId: "", date: "", time: "", purpose: "" });
+      setPhoto(null);
       load();
     } catch (err) {
       alert(err.response?.data?.message || "Failed to request appointment");
-    }
-    finally {
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -93,7 +112,20 @@ const VisitorDashboard = () => {
             <div className="relative w-full">
               <input placeholder="Purpose" className='w-full px-4 py-3 rounded-xl bg-gray-900 border text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.purpose} onChange={e => setForm({ ...form, purpose: e.target.value })} />
             </div>
-            <button type="submit" className='mt-4 w-full py-3 rounded-xl border-none bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-[0_12px_30px_rgba(139,92,246,0.6)] hover:scale-[1.03] hover:shadow-[0_18px_45px_rgba(139,92,246,0.8)] transition-all'>Request Appointment</button>
+            <div className="relative w-full">
+              <label className='block text-sm font-medium mb-2'>Upload Your Photo *</label>
+              <input 
+                type="file" 
+                accept="image/*"
+                onChange={e => setPhoto(e.target.files[0])}
+                className='w-full px-4 py-3 rounded-xl bg-gray-900 border text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700 outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'
+                required
+              />
+              {photo && <p className='text-sm text-green-400 mt-2'>✓ Photo selected: {photo.name}</p>}
+            </div>
+            <button type="submit" disabled={loading} className='mt-4 w-full py-3 rounded-xl border-none bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-[0_12px_30px_rgba(139,92,246,0.6)] hover:scale-[1.03] hover:shadow-[0_18px_45px_rgba(139,92,246,0.8)] transition-all disabled:opacity-50 disabled:cursor-not-allowed'>
+              {loading ? 'Submitting...' : 'Request Appointment'}
+            </button>
           </form>
         </div>
         <h2 className="justify-center flex items-center text-white font-bold text-3xl mt-5">My Appointments</h2>

@@ -4,7 +4,11 @@ import Appointment from "../Models/AppointmentModel.js";
 
 export const createAppointment = async (req, res) => {
     try {
-        const { hostId, date, time, purpose } = req.body;
+        const { hostId, date, time, purpose, photo } = req.body;
+
+        if (!photo) {
+            return res.status(400).json({ message: "Photo is required" });
+        }
 
         const appointment = await Appointment.create({
             visitor: req.user._id,
@@ -12,6 +16,7 @@ export const createAppointment = async (req, res) => {
             date,
             time,
             purpose,
+            photo,
             status: "pending"
         })
         res.status(201).json(appointment)

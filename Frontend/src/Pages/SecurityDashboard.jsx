@@ -12,6 +12,7 @@ const SecurityDashboard = () => {
   const [creating, setCreating] = useState(false);
   const [visitor, setVisitor] = useState([]);
   const [form, setForm] = useState({ visitorId: "", date: "", time: "", purpose: "" });
+  const [scannedAppointment, setScannedAppointment] = useState(null);
 
   const load = async () => {
     try {
@@ -49,6 +50,7 @@ const SecurityDashboard = () => {
                 setResult(decodedText);
                 const res = await api.post("/api/security/scanqr", { qrData: decodedText });
                 setScanningType(res.data.type);
+                setScannedAppointment(res.data.appointment);
                 alert(res.data.message);
                 setIsScanning(false)
               } catch (error) {
@@ -153,6 +155,33 @@ const SecurityDashboard = () => {
           </p>
         )
       }
+      
+      {scannedAppointment && (
+        <div className="flex justify-center mt-8">
+          <div className="relative z-10 w-[340px] sm:w-[420px] rounded-2xl p-8 border-t-5 border-t-purple-900 bg-gray-800 border-2 gap-5">
+            <h3 className="text-2xl font-bold text-center mb-4 bg-gradient-to-r from-purple-600 to-indigo-600 p-3 rounded-xl">
+              Visitor Information
+            </h3>
+            {scannedAppointment.photo && (
+              <div className="flex justify-center mb-4">
+                <img 
+                  src={scannedAppointment.photo} 
+                  alt="Visitor Photo" 
+                  className="w-48 h-48 object-cover rounded-xl border-4 border-purple-500"
+                />
+              </div>
+            )}
+            <div className="space-y-3">
+              <p className="text-lg"><span className="font-bold text-purple-400">Name:</span> {scannedAppointment.visitor?.name || 'N/A'}</p>
+              <p className="text-lg"><span className="font-bold text-purple-400">Email:</span> {scannedAppointment.visitor?.email || 'N/A'}</p>
+              <p className="text-lg"><span className="font-bold text-purple-400">Host:</span> {scannedAppointment.host?.name || 'N/A'}</p>
+              <p className="text-lg"><span className="font-bold text-purple-400">Date:</span> {scannedAppointment.date}</p>
+              <p className="text-lg"><span className="font-bold text-purple-400">Time:</span> {scannedAppointment.time}</p>
+              <p className="text-lg"><span className="font-bold text-purple-400">Purpose:</span> {scannedAppointment.purpose || 'N/A'}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
