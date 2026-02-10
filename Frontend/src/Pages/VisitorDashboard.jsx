@@ -131,7 +131,7 @@ const VisitorDashboard = () => {
                     <p className='w-full px-4 mb-5 py-3 rounded-xl bg-gray-800 border border-gray-800 text-white placeholder-white/40 outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'>Valid Till: {new Date(appointmentPass.validTill).toLocaleString()}</p>
                     {appointmentPass.pdfPath && (
                       <a
-                        href={`http://localhost:3000/${appointmentPass.pdfPath}`}
+                        href={`http://${api}/${appointmentPass.pdfPath}`}
                         target="_blank"
                         rel="noreferrer"
                         className='mt-4 md:px-20  px-12 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium '>
