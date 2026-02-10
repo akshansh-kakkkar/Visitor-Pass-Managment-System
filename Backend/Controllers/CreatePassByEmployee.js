@@ -9,7 +9,7 @@ import { sendPassEmail } from "../Utils/Email.js";
 const CreatePassByEmployee = async (req, res) => {
     try {
         const { visitorId, date, time, purpose } = req.body;
-        
+
         const visitor = await Visitor.findById(visitorId);
         if (!visitor) {
             return res.status(404).json({
@@ -23,6 +23,7 @@ const CreatePassByEmployee = async (req, res) => {
             date,
             time,
             purpose,
+            photo: "staff-created",
             status: "approved"
         });
 

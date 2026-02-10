@@ -40,22 +40,22 @@ const VisitorDashboard = () => {
       alert("Please upload a photo");
       return;
     }
-    
+
     try {
       setLoading(true);
-      
+
       const reader = new FileReader();
       const base64Photo = await new Promise((resolve, reject) => {
         reader.onload = () => resolve(reader.result);
         reader.onerror = reject;
         reader.readAsDataURL(photo);
       });
-      
+
       await api.post("/api/visitor/create-appointment", {
         ...form,
         photo: base64Photo
       });
-      
+
       alert("Appointment requested");
       setForm({ hostId: "", date: "", time: "", purpose: "" });
       setPhoto(null);
@@ -110,8 +110,8 @@ const VisitorDashboard = () => {
             </div>
             <div className="relative w-full">
               <label className='block text-sm font-medium mb-2'>Upload Your Photo *</label>
-              <input 
-                type="file" 
+              <input
+                type="file"
                 accept="image/*"
                 onChange={e => setPhoto(e.target.files[0])}
                 className='w-full px-4 py-3 rounded-xl bg-gray-900 border text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700 outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'
@@ -134,8 +134,8 @@ const VisitorDashboard = () => {
             )
 
             return (
-              <div className="justify-center flex items-center content-center text-center mb-7">
-                <div key={a._id} className=" justify-center mt-8 relative  z-10 w-[340px] sm:w-[560px] items-center rounded-2xl p-8 border-t-5 border-t-purple-900 flex flex-col bg-gray-800 border-2 shadow-[-0_25px_60px_rgba(0,0,0,0.85)] gap-5 backdrop-blur-2xl">
+              <div key={a._id} className="justify-center flex items-center content-center text-center mb-7">
+                <div className=" justify-center mt-8 relative  z-10 w-[340px] sm:w-[560px] items-center rounded-2xl p-8 border-t-5 border-t-purple-900 flex flex-col bg-gray-800 border-2 shadow-[-0_25px_60px_rgba(0,0,0,0.85)] gap-5 backdrop-blur-2xl">
                   <p className="text-2xl w-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium bg-purple-600 p-3 rounded-2xl">
                     <b>{a.host?.name || 'Unknown Employee'}</b> {a.host?.department ? `(${a.host.department})` : ""} — {a.date} {a.time}
                   </p>
