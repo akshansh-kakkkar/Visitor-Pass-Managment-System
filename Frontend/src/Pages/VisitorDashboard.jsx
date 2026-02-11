@@ -113,7 +113,7 @@ const VisitorDashboard = () => {
                 type="file"
                 accept="image/*"
                 onChange={e => setPhoto(e.target.files[0])}
-                className='w-full px-4 py-3 rounded-xl bg-gray-900 border text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700 outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'
+                className='w-full px-4 py-3 rounded-xl bg-gray-900 border text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'
                 required
               />
             </div>
@@ -172,6 +172,7 @@ const VisitorDashboard = () => {
                     </p>
                   )}
                 </div>
+
               </div>
             );
           })
@@ -183,3 +184,4 @@ const VisitorDashboard = () => {
 };
 
 export default VisitorDashboard;
+
