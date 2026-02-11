@@ -29,6 +29,30 @@ export const createAppointment = async (req, res) => {
     }
 }
 
+export const SecurityChoice = async (req, res) => {
+    try {
+        const { appointmentId, status } = req.body;
+
+        if (!["accepted", "rejected"].includes(status)) {
+            return res.status(400).json({ message: "Invalid status" });
+        }
+
+        const appointment = await Appointment.findByIdAndUpdate(
+            appointmentId,
+            { status },
+            { new: true }
+        ).populate("visitor host");
+
+        res.status(200).json(appointment);
+
+    }
+    catch (error) {
+        res.status(401).json({
+            message: error.message
+        })
+    }
+}
+
 export const getAllAppointments = async (req, res) => {
     try {
         let query = {};
