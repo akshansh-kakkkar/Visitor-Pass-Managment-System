@@ -269,7 +269,7 @@ const SecurityDashboard = () => {
                 {alreadyCheckedIn ? (
                   <button
                     onClick={handleCheckOut}
-                    className="bg-blue-600 px-6 py-2 rounded-xl font-bold"
+                    className="mt-4 w-full py-3 rounded-xl border-none bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-[0_12px_30px_rgba(139,92,246,0.6)] hover:scale-[1.03] hover:shadow-[0_18px_45px_rgba(139,92,246,0.8)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Check Out
                   </button>
@@ -277,15 +277,14 @@ const SecurityDashboard = () => {
                   <>
                     <button
                       onClick={handleCheckIn}
-                      className="bg-green-600 px-6 py-2 rounded-xl font-bold"
+                      className='mt-4 w-full py-3 rounded-xl border-none bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-[0_12px_30px_rgba(139,92,246,0.6)] hover:scale-[1.03] hover:shadow-[0_18px_45px_rgba(139,92,246,0.8)] transition-all disabled:opacity-50 disabled:cursor-not-allowed'
                     >
                       Check In
                     </button>
 
                     <button
                       onClick={handleReject}
-                      className="bg-red-600 px-6 py-2 rounded-xl font-bold"
-                    >
+                      className='mt-4 w-full py-3 rounded-xl border-none bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-[0_12px_30px_rgba(139,92,246,0.6)] hover:scale-[1.03] hover:shadow-[0_18px_45px_rgba(139,92,246,0.8)] transition-all disabled:opacity-50 disabled:cursor-not-allowed'                    >
                       Reject
                     </button>
                   </>

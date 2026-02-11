@@ -15,7 +15,7 @@ const EmployeeDashboard = () => {
 
   const load = async () => {
     setLoading(true);
-    
+
     try {
       const [appointmentRes, visitorRes, logsRes] = await Promise.all([
         api.get(`/api/visitor/my-appointments?t=${Date.now()}`),
@@ -124,9 +124,17 @@ const EmployeeDashboard = () => {
                 <div className="relative z-10 w-full max-w-[600px] items-center rounded-2xl p-8 border-t-5 border-t-purple-900 flex flex-col  border-gray-600 border-2 gap-6 backdrop-blur-2xl ">
 
                   <div className="w-full flex flex-col items-center gap-4">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-2xl shadow-lg">
-                      {(a.visitor?.name || 'V')[0].toUpperCase()}
-                    </div>
+                    {a.photo ? (
+                      <img
+                        src={a.photo}
+                        alt="Visitor"
+                        className="w-24 h-24 rounded-full object-cover border-4 border-purple-500 shadow-lg"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-2xl shadow-lg">
+                        {(a.visitor?.name || 'V')[0].toUpperCase()}
+                      </div>
+                    )}
                     <div>
                       <h3 className="text-2xl font-bold bg-gray-800 p-4 rounded-2xl text-white text-transparent">
                         {a.visitor?.name || 'Unknown Visitor'}
@@ -158,7 +166,7 @@ const EmployeeDashboard = () => {
                     </span>
                   </div>
                   {
-                    a.status === 'approved' && (()=>{
+                    a.status === 'approved' && (() => {
                       const logged = checkLogs.find(log => log.pass?.appointment?._id === a._id || log.pass?.appointment === a._id);
                       return logged ? (
                         <div className='text-white'>

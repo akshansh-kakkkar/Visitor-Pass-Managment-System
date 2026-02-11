@@ -118,7 +118,7 @@ const VisitorDashboard = () => {
               />
             </div>
             <button type="submit" disabled={loading} className='mt-4 w-full py-3 rounded-xl border-none bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-[0_12px_30px_rgba(139,92,246,0.6)] hover:scale-[1.03] hover:shadow-[0_18px_45px_rgba(139,92,246,0.8)] transition-all disabled:opacity-50 disabled:cursor-not-allowed'>
-              {loading ? 'Submitting...' : 'Request Appointment'}
+              {loading ? 'Submitting' : 'Request Appointment'}
             </button>
           </form>
         </div>
@@ -134,11 +134,18 @@ const VisitorDashboard = () => {
             return (
               <div key={a._id} className="justify-center flex items-center content-center text-center mb-7">
                 <div className=" justify-center mt-8 relative  z-10 w-[340px] sm:w-[560px] items-center rounded-2xl p-8 border-t-5 border-t-purple-900 flex flex-col bg-gray-800 border-2 shadow-[-0_25px_60px_rgba(0,0,0,0.85)] gap-5 backdrop-blur-2xl">
+                  {a.photo && (
+                    <img
+                      src={a.photo}
+                      alt="Your Uploaded Photo"
+                      className="w-32 h-32 rounded-full object-cover border-4 border-purple-500 shadow-lg"
+                    />
+                  )}
                   <p className="text-2xl w-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium bg-purple-600 p-3 rounded-2xl">
                     <b>{a.host?.name || 'Unknown Employee'}</b> {a.host?.department ? `(${a.host.department})` : ""} — {a.date} {a.time}
                   </p>
-                  <p className="w-full px-4 py-2 rounded-xl text-2xl bg-gray-800 border border-gray-800  outline-none focus:border-purple-500/60 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition">Purpose: {a.purpose || 'N/A'}</p>
-                  <p className="w-full px-4 py-2 rounded-xl text-2xl bg-gray-800 border border-gray-800 outline-none focus:border-purple-500/60 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition">Status: <span style={{
+                  <p className="w-full px-4 py-2 rounded-xl text-2xl bg-gray-800 border border-gray-800  outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition">Purpose: {a.purpose || 'N/A'}</p>
+                  <p className="w-full px-4 py-2 rounded-xl text-2xl bg-gray-800 border border-gray-800 outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition">Status: <span style={{
                     fontWeight: 'bold',
                     color: a.status === 'approved' ? 'green' : a.status === 'rejected' ? 'red' : 'orange'
                   }}>{a.status.toUpperCase()}</span></p>
@@ -147,11 +154,11 @@ const VisitorDashboard = () => {
                     <div>
                       <h4 className="text-2xl font-bold ">Your Entry Pass</h4>
                       <img src={appointmentPass.qrCode} className="ml-19 my-5 rounded-xl" alt="Pass QR Code" />
-                      <p className='w-full mb-5 px-4 py-3 rounded-xl bg-gray-800 border border-gray-800 text-white placeholder-white/40 outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'>Valid From: {new Date(appointmentPass.validFrom).toLocaleString()}</p>
-                      <p className='w-full px-4 mb-5 py-3 rounded-xl bg-gray-800 border border-gray-800 text-white placeholder-white/40 outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'>Valid Till: {new Date(appointmentPass.validTill).toLocaleString()}</p>
+                      <p className='w-full mb-5 px-4 py-3 rounded-xl bg-gray-800 border border-gray-800 text-white placeholder-gray-400 outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'>Valid From: {new Date(appointmentPass.validFrom).toLocaleString()}</p>
+                      <p className='w-full px-4 mb-5 py-3 rounded-xl bg-gray-800 border border-gray-800 text-white placeholder-gray-400 outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'>Valid Till: {new Date(appointmentPass.validTill).toLocaleString()}</p>
                       {appointmentPass.pdfPath && (
                         <a
-                          href={`http://${api}/${appointmentPass.pdfPath}`}
+                          href={`https://${api}/${appointmentPass.pdfPath}`}
                           target="_blank"
                           rel="noreferrer"
                           download
