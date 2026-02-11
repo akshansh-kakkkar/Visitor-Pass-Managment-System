@@ -13,6 +13,8 @@ const SecurityDashboard = () => {
   const [visitor, setVisitor] = useState([]);
   const [form, setForm] = useState({ visitorId: "", date: "", time: "", purpose: "" });
   const [scannedAppointment, setScannedAppointment] = useState(null);
+  const [scannedQrData, setScannedQrData] = useState("");
+  const [alreadyCheckedIn, setAlreadyCheckedIn] = useState(false);
 
   const scannerRef = useRef(null);
   const isProcessingRef = useRef(false);
@@ -35,6 +37,8 @@ const SecurityDashboard = () => {
     setResult("");
     setScanningType("");
     setScannedAppointment(null);
+    setScannedQrData("");
+    setAlreadyCheckedIn(false);
     isProcessingRef.current = false;
     if (scannerRef.current) {
       try {
@@ -69,11 +73,11 @@ const SecurityDashboard = () => {
             await qr.stop();
             scannerRef.current = null;
             setResult(decodedText);
+            setScannedQrData(decodedText);
 
-            const res = await api.post("/api/security/scanqr", { qrData: decodedText });
-            setScanningType(res.data.type);
+            const res = await api.post("/api/security/verifyqr", { qrData: decodedText });
             setScannedAppointment(res.data.appointment);
-            alert(res.data.message);
+            setAlreadyCheckedIn(res.data.alreadyCheckedIn);
           } catch (error) {
             alert(error.response?.data?.message || "Scan failed");
           } finally {
@@ -117,150 +121,182 @@ const SecurityDashboard = () => {
       }
     };
   }, [isScanning]);
-  const handleStatusUpdate = async (status) => {
+
+  const handleCheckIn = async () => {
     try {
-      const res = await api.post("/api/security/update-status", {
-        appointmentId: scannedAppointment._id,
-        status
-      });
-
-      setScannedAppointment(res.data);
-      alert(`Appointment ${status}`);
-
+      const res = await api.post("/api/security/scanqr", { qrData: scannedQrData });
+      setScanningType(res.data.type);
+      alert(res.data.message);
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to update status");
+      alert(err.response?.data?.message || "Check-in failed");
     }
-    const CreatePass = async (e) => {
-      try {
-        e.preventDefault();
-        setCreating(true);
-        await api.post("/api/visitor/staff/handle-route/pass", form);
-        alert("Pass Created Successfully!");
-        setForm({ visitorId: "", date: "", time: "", purpose: "" });
-        load();
-      } catch (err) {
-        alert(err.response?.data?.message || "Failed to create pass");
-      } finally {
-        setCreating(false);
-      }
-    }
+  };
 
-    return (
-      <div className="min-h-screen bg-black text-white">
-        <SecurityNav />
-        <BgGlow2 />
-        <div className="flex justify-center items-center m-5">
-          <form onSubmit={CreatePass} className="relative  z-10 w-[340px] sm:w-[420px] items-center rounded-2xl p-8 border-t-5 border-t-purple-900 flex flex-col bg-gray-600 border-gray-800 border-2 gap-5">
-            <h2 className='text-center rounded-xl p-2 text-2xl font-bold  bg-gradient-to-r from-purple-600 to-indigo-600 '>Schedule the Visit</h2>
-            <div className="relative w-full">
-              <select
-                className='w-full px-4 py-3 rounded-xl bg-gray-700 border border-white text-white placeholder-gray-400 outline-none focus:border-purple-500/60 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)]'
-                value={form.visitorId}
-                onChange={e => setForm({ ...form, visitorId: e.target.value })}
-                required
-              >
-                <option value="" className="bg-gray-700">Select Visitor</option>
-                {visitor.map(v => (
-                  <option key={v._id} value={v._id}>
-                    {v.name} {v.email ? `(${v.email})` : ""}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="relative w-full">
-              <input type="date" className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} required />
-            </div>
-            <div className="relative w-full">
-              <input type="time" className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.time} onChange={e => setForm({ ...form, time: e.target.value })} required />
-            </div>
-            <div className="relative w-full">
-              <input placeholder="Purpose" className='w-full px-4 py-3 rounded-xl bg-gray-900 border text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.purpose} onChange={e => setForm({ ...form, purpose: e.target.value })} />
-            </div>
-            <button
-              type="submit"
-              disabled={creating}
-              className='mt-4 w-full py-3 rounded-xl border-none bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium'
+  const handleReject = async () => {
+    try {
+      const res = await api.post("/api/security/rejectvisitor", { qrData: scannedQrData });
+      setScanningType("rejected");
+      alert(res.data.message);
+    } catch (err) {
+      alert(err.response?.data?.message || "Rejection failed");
+    }
+  };
+
+  const handleCheckOut = async () => {
+    try {
+      const res = await api.post("/api/security/scanqr", { qrData: scannedQrData });
+      setScanningType(res.data.type);
+      alert(res.data.message);
+    } catch (err) {
+      alert(err.response?.data?.message || "Check-out failed");
+    }
+  };
+
+  const CreatePass = async (e) => {
+    try {
+      e.preventDefault();
+      setCreating(true);
+      await api.post("/api/visitor/staff/handle-route/pass", form);
+      alert("Pass Created Successfully!");
+      setForm({ visitorId: "", date: "", time: "", purpose: "" });
+      load();
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to create pass");
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-black text-white">
+      <SecurityNav />
+      <BgGlow2 />
+      <div className="flex justify-center items-center m-5">
+        <form onSubmit={CreatePass} className="relative  z-10 w-[340px] sm:w-[420px] items-center rounded-2xl p-8 border-t-5 border-t-purple-900 flex flex-col bg-gray-600 border-gray-800 border-2 gap-5">
+          <h2 className='text-center rounded-xl p-2 text-2xl font-bold  bg-gradient-to-r from-purple-600 to-indigo-600 '>Schedule the Visit</h2>
+          <div className="relative w-full">
+            <select
+              className='w-full px-4 py-3 rounded-xl bg-gray-700 border border-white text-white placeholder-gray-400 outline-none focus:border-purple-500/60 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)]'
+              value={form.visitorId}
+              onChange={e => setForm({ ...form, visitorId: e.target.value })}
+              required
             >
-              {creating ? 'Creating Pass...' : 'Create Pass'}
-            </button>
-          </form>
-        </div>
-        <div id="reader" style={{ width: "300px", margin: "auto", border: isScanning ? "2px solid white" : "none" }} />
-
-        <div className="flex gap-4 justify-center mt-6 ">
-          <button onClick={() => setIsScanning(true)} disabled={isScanning} className="bg-green-600 rounded-xl p-2 disabled:opacity-50">
-            Scan Now
-          </button>
-
-          <button onClick={stopScanner} disabled={!isScanning} className="bg-red-600 rounded-xl p-2 disabled:opacity-50">
-            Stop Scan
-          </button>
-        </div>
-
-        {result && (
-          <p className="text-green-400 text-center mt-4">
-            Scanned: {result}
-          </p>
-        )}
-
-        {error && (
-          <p className="text-red-400 text-center mt-4">
-            {error}
-          </p>
-        )}
-        {
-          scanningType && (
-            <p className="text-white  text-center mt-4 ">
-              {scanningType === "checkIn" ? "Visitor Checked In Successfully!" : "Visitor Checked Out Successfully!"}
-            </p>
-          )
-        }
-
-        {scannedAppointment && (
-          <div className="flex justify-center mt-8">
-            <div className="relative z-10 w-[340px] sm:w-[420px] rounded-2xl p-8 border-t-5 border-t-purple-900 bg-gray-800 border-2 gap-5">
-              <h3 className="text-2xl font-bold text-center mb-4 bg-gradient-to-r from-purple-600 to-indigo-600 p-3 rounded-xl">
-                Visitor Information
-              </h3>
-              {scannedAppointment.photo && scannedAppointment.photo.startsWith("data:") && (
-                <div className="flex justify-center mb-4">
-                  <img
-                    src={scannedAppointment.photo}
-                    alt="Visitor Photo"
-                    className="w-48 h-48 object-cover rounded-xl border-4 border-purple-500"
-                  />
-                </div>
-              )}
-              {scannedAppointment?.status === "pending" && (
-                <div className="flex gap-4 justify-center mt-6">
-                  <button
-                    onClick={() => handleStatusUpdate("accepted")}
-                    className="bg-green-600 px-6 py-2 rounded-xl"
-                  >
-                    Check In
-                  </button>
-
-                  <button
-                    onClick={() => handleStatusUpdate("rejected")}
-                    className="bg-red-600 px-6 py-2 rounded-xl"
-                  >
-                    Reject
-                  </button>
-                </div>
-              )}
-              <div className="space-y-3">
-                <p className="text-lg"><span className="font-bold text-purple-400">Name:</span> {scannedAppointment.visitor?.name || 'N/A'}</p>
-                <p className="text-lg"><span className="font-bold text-purple-400">Email:</span> {scannedAppointment.visitor?.email || 'N/A'}</p>
-                <p className="text-lg"><span className="font-bold text-purple-400">Host:</span> {scannedAppointment.host?.name || 'N/A'}</p>
-                <p className="text-lg"><span className="font-bold text-purple-400">Date:</span> {scannedAppointment.date}</p>
-                <p className="text-lg"><span className="font-bold text-purple-400">Time:</span> {scannedAppointment.time}</p>
-                <p className="text-lg"><span className="font-bold text-purple-400">Purpose:</span> {scannedAppointment.purpose || 'N/A'}</p>
-              </div>
-            </div>
+              <option value="" className="bg-gray-700">Select Visitor</option>
+              {visitor.map(v => (
+                <option key={v._id} value={v._id}>
+                  {v.name} {v.email ? `(${v.email})` : ""}
+                </option>
+              ))}
+            </select>
           </div>
-        )}
+          <div className="relative w-full">
+            <input type="date" className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} required />
+          </div>
+          <div className="relative w-full">
+            <input type="time" className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.time} onChange={e => setForm({ ...form, time: e.target.value })} required />
+          </div>
+          <div className="relative w-full">
+            <input placeholder="Purpose" className='w-full px-4 py-3 rounded-xl bg-gray-900 border text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.purpose} onChange={e => setForm({ ...form, purpose: e.target.value })} />
+          </div>
+          <button
+            type="submit"
+            disabled={creating}
+            className='mt-4 w-full py-3 rounded-xl border-none bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium'
+          >
+            {creating ? 'Creating Pass...' : 'Create Pass'}
+          </button>
+        </form>
       </div>
-    );
-  }};
+      <div id="reader" style={{ width: "300px", margin: "auto", border: isScanning ? "2px solid white" : "none" }} />
 
-  export default SecurityDashboard;
+      <div className="flex gap-4 justify-center mt-6 ">
+        <button onClick={() => setIsScanning(true)} disabled={isScanning} className="bg-green-600 rounded-xl p-2 disabled:opacity-50">
+          Scan Now
+        </button>
+
+        <button onClick={stopScanner} disabled={!isScanning} className="bg-red-600 rounded-xl p-2 disabled:opacity-50">
+          Stop Scan
+        </button>
+      </div>
+
+      {result && (
+        <p className="text-green-400 text-center mt-4">
+          Scanned: {result}
+        </p>
+      )}
+
+      {error && (
+        <p className="text-red-400 text-center mt-4">
+          {error}
+        </p>
+      )}
+      {
+        scanningType && (
+          <p className="text-white  text-center mt-4 ">
+            {scanningType === "checkIn" ? "Visitor Checked In Successfully!" :
+              scanningType === "checkout" ? "Visitor Checked Out Successfully!" :
+                scanningType === "rejected" ? "Visitor Rejected!" : ""}
+          </p>
+        )
+      }
+
+      {scannedAppointment && (
+        <div className="flex justify-center mt-8">
+          <div className="relative z-10 w-[340px] sm:w-[420px] rounded-2xl p-8 border-t-5 border-t-purple-900 bg-gray-800 border-2 gap-5">
+            <h3 className="text-2xl font-bold text-center mb-4 bg-gradient-to-r from-purple-600 to-indigo-600 p-3 rounded-xl">
+              Visitor Information
+            </h3>
+            {scannedAppointment.photo && scannedAppointment.photo.startsWith("data:") && (
+              <div className="flex justify-center mb-4">
+                <img
+                  src={scannedAppointment.photo}
+                  alt="Visitor Photo"
+                  className="w-48 h-48 object-cover rounded-xl border-4 border-purple-500"
+                />
+              </div>
+            )}
+            <div className="space-y-3">
+              <p className="text-lg"><span className="font-bold text-purple-400">Name:</span> {scannedAppointment.visitor?.name || 'N/A'}</p>
+              <p className="text-lg"><span className="font-bold text-purple-400">Email:</span> {scannedAppointment.visitor?.email || 'N/A'}</p>
+              <p className="text-lg"><span className="font-bold text-purple-400">Host:</span> {scannedAppointment.host?.name || 'N/A'}</p>
+              <p className="text-lg"><span className="font-bold text-purple-400">Date:</span> {scannedAppointment.date}</p>
+              <p className="text-lg"><span className="font-bold text-purple-400">Time:</span> {scannedAppointment.time}</p>
+              <p className="text-lg"><span className="font-bold text-purple-400">Purpose:</span> {scannedAppointment.purpose || 'N/A'}</p>
+            </div>
+
+            {!scanningType && (
+              <div className="flex gap-4 justify-center mt-6">
+                {alreadyCheckedIn ? (
+                  <button
+                    onClick={handleCheckOut}
+                    className="bg-blue-600 px-6 py-2 rounded-xl font-bold"
+                  >
+                    Check Out
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      onClick={handleCheckIn}
+                      className="bg-green-600 px-6 py-2 rounded-xl font-bold"
+                    >
+                      Check In
+                    </button>
+
+                    <button
+                      onClick={handleReject}
+                      className="bg-red-600 px-6 py-2 rounded-xl font-bold"
+                    >
+                      Reject
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default SecurityDashboard;
