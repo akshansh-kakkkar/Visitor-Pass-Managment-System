@@ -30,8 +30,6 @@ const Navbar = () => {
 
           <ul className="hidden sm:flex gap-5">
             <HashLink smooth to="/#" className={navitem("#")}>HOME</HashLink>
-            <HashLink smooth to="/#about" className={navitem("#about")}>ABOUT</HashLink>
-            <HashLink smooth to="/#reviews" className={navitem("#reviews")}>REVIEWS</HashLink>
             <HashLink smooth to="/#contact" className={navitem("#contact")}>CONTACT</HashLink>
           </ul>
         </div>
@@ -50,4 +48,5 @@ const Navbar = () => {
 }
 
 export default Navbar
+
 
