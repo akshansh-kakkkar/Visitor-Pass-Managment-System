@@ -40,8 +40,6 @@ const Navbar = () => {
         {open && (
           <ul className="sm:hidden mt-4 flex flex-col gap-3 bg-[#1e1e1e] p-4 rounded-xl">
             <HashLink smooth to="/#" onClick={() => setOpen(false)} className={navitem("#")}>HOME</HashLink>
-            <HashLink smooth to="/#about" onClick={() => setOpen(false)} className={navitem("#about")}>ABOUT</HashLink>
-            <HashLink smooth to="/#reviews" onClick={() => setOpen(false)} className={navitem("#reviews")}>REVIEWS</HashLink>
             <HashLink smooth to="/#contact" onClick={() => setOpen(false)} className={navitem("#contact")}>CONTACT</HashLink>
           </ul>
         )}
@@ -52,3 +50,4 @@ const Navbar = () => {
 }
 
 export default Navbar
+
