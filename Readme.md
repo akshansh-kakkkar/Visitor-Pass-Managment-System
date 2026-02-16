@@ -37,4 +37,4 @@ A modern Pass Management System for security managment
 ## Credits
 # LordIcon
 
-#### Video Recording : https://drive.google.com/file/d/16gR_-zoZB4ba_gvecsECPJ-DaF_Y4pM7/view?usp=sharing
+#### Video Recording : 
