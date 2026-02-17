@@ -3,16 +3,19 @@ import api from '../api/api.js'
 import AdminNav from "../Components/AdminNav.jsx"
 import LoadingComponent from "../Components/LoadingComponent.jsx"
 import BgGlow2 from '../Components/BgGlow2.jsx';
+import eyeIcon from '../assets/eye.svg'
+import eyeSlashIcon from '../assets/eye-slash.svg'
 const AdminDashboard = () => {
   const [Loading, setLoading] = useState(null);
-  const [form, setform] = useState({name: "", email: "", password: "", phone: "", department: "", role: ""});
+  const [form, setform] = useState({ name: "", email: "", password: "", phone: "", department: "", role: "" });
   const [checkVisitor, setCheckVisitor] = useState([]);
   const [error, seterror] = useState("");
   const [staff, setStaff] = useState([])
   const [editStaff, setEditStaff] = useState(null)
-  const [editStafform, setEditStafform] = useState({name: "", email: "", phone: "", department: "", role: ""})
+  const [editStafform, setEditStafform] = useState({ name: "", email: "", phone: "", department: "", role: "" })
   const [editVisitor, setEditVisitor] = useState(null);
-  const [editVisitorForm, setEditVisitorForm] = useState({name : "", email : "", phone : ""})
+  const [editVisitorForm, setEditVisitorForm] = useState({ name: "", email: "", phone: "" })
+  const [showPassword, setShowPassword] = useState(false);
 
   const loadData = async () => {
     setLoading(true);
@@ -92,7 +95,7 @@ const AdminDashboard = () => {
     }
   }
 
-    const editingVisitor = (VisitorItem) => {
+  const editingVisitor = (VisitorItem) => {
     try {
       setEditVisitor(VisitorItem._id);
       setEditVisitorForm({
@@ -135,7 +138,19 @@ const AdminDashboard = () => {
               <input type="email" placeholder='email' className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.email} onChange={e => setform({ ...form, email: e.target.value })} />
             </div>
             <div className='relative w-full'>
-              <input type="password" placeholder='password' className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.password} onChange={e => setform({ ...form, password: e.target.value })} />
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder='password'
+                className='w-full px-4 pr-12 py-3 rounded-xl bg-gray-900 text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'
+                value={form.password}
+                onChange={e => setform({ ...form, password: e.target.value })}
+              />
+              <img
+                src={showPassword ? eyeIcon : eyeSlashIcon}
+                alt="toggle password"
+                onClick={() => setShowPassword(prev => !prev)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-5 opacity-60 cursor-pointer hover:opacity-100 transition"
+              />
             </div>
             <div className='relative w-full'>
               <input type="text" placeholder='phone' className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.phone} onChange={e => setform({ ...form, phone: e.target.value })} />
@@ -224,7 +239,7 @@ const AdminDashboard = () => {
             )}
           </div>
         </div>
-                <div className='mt-24'>
+        <div className='mt-24'>
           <h2 className="justify-center flex items-center text-white font-bold text-3xl mb-8">Visitors</h2>
           <div className='mx-auto px-4 max-w-7xl'>
             {Loading && checkVisitor && checkVisitor.length === 0 ? (
