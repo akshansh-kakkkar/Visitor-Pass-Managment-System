@@ -10,10 +10,12 @@ const VisitorLogin = () => {
   const [password, setPassword] = useState("");
   const [error, seterror] = useState('')
   const [showpassword, setShowpassword] = useState(false)
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const submit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const res = await api.post("/api/visitor/login", {
@@ -27,6 +29,8 @@ const VisitorLogin = () => {
       navigate("/visitor");
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -68,7 +72,14 @@ const VisitorLogin = () => {
             className="absolute right-4 top-1/2 -translate-y-1/2 w-5 opacity-60 cursor-pointer hover:opacity-100 transition"
           />
         </div>
-        <button type='submit' className='mt-4 w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-[0_12px_30px_rgba(139,92,246,0.6)] hover:scale-[1.03] hover:shadow-[0_18px_45px_rgba(139,92,246,0.8)] transition-all'>LOGIN</button>
+        <button
+          type='submit'
+          disabled={loading}
+          className={`mt-4 w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-[0_12px_30px_rgba(139,92,246,0.6)] transition-all ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:scale-[1.03] hover:shadow-[0_18px_45px_rgba(139,92,246,0.8)]'}`}
+        >
+          {loading ? 'Logging in...' : 'LOGIN'}
+        </button>
+        {loading && <p className="text-purple-300 text-xs text-center mt-2 animate-pulse">Please wait for 30 to 60 seconds, the server is loading...</p>}
         <div className='w-80 h-[0.3px] mt-7 bg-gray-800 rounded-full'></div>
         <p className='text-sm text-gray-400 font-bold'>Dont have an account?   <span className='text-purple-600 font-semibold hover:underline'><Link to="/visitor-register">click here</Link></span> </p>
         {error && <p className="text-red-400 text-sm text-center mt-3 relative z-10">{error}</p>}
