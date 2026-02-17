@@ -49,8 +49,9 @@ const AdminDashboard = () => {
     }
   }
   const createStaff = async (e) => {
+    e.preventDefault()
+    seterror("")
     try {
-      e.preventDefault()
       await api.post(`/api/admin/create-user/`, form);
       alert("Staff Created Successfully!");
       setform({
@@ -61,6 +62,7 @@ const AdminDashboard = () => {
         department: "",
         role: ""
       })
+      loadData();
     }
     catch (error) {
       seterror(error.response?.data?.message || "Error while creating staff")
@@ -132,10 +134,10 @@ const AdminDashboard = () => {
           <form onSubmit={createStaff} className="relative  z-10 w-[340px] sm:w-[420px] items-center rounded-2xl p-8 border-t-5 border-t-purple-900 flex flex-col bg-gray-600 border-gray-800 border-2 gap-5">
             <h2 className='p-2 rounded-xl text-center text-2xl font-bold  bg-gradient-to-r from-purple-600 to-indigo-600'> createStaff</h2>
             <div className='relative w-full'>
-              <input type="text" placeholder='fullname' className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.name} onChange={e => setform({ ...form, name: e.target.value })} />
+              <input type="text" placeholder='fullname' className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.name} onChange={e => setform({ ...form, name: e.target.value })} required />
             </div>
             <div className='relative w-full'>
-              <input type="email" placeholder='email' className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.email} onChange={e => setform({ ...form, email: e.target.value })} />
+              <input type="email" placeholder='email' className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.email} onChange={e => setform({ ...form, email: e.target.value })} required />
             </div>
             <div className='relative w-full'>
               <input
@@ -144,6 +146,8 @@ const AdminDashboard = () => {
                 className='w-full px-4 pr-12 py-3 rounded-xl bg-gray-900 text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition'
                 value={form.password}
                 onChange={e => setform({ ...form, password: e.target.value })}
+                required
+                minLength={6}
               />
               <img
                 src={showPassword ? eyeIcon : eyeSlashIcon}
@@ -153,7 +157,7 @@ const AdminDashboard = () => {
               />
             </div>
             <div className='relative w-full'>
-              <input type="text" placeholder='phone' className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.phone} onChange={e => setform({ ...form, phone: e.target.value })} />
+              <input type="text" placeholder='phone' className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' value={form.phone} onChange={e => setform({ ...form, phone: e.target.value })} required />
             </div>
             <div className='relative w-full'>
               <input type="text" className='w-full px-4 py-3 rounded-xl bg-gray-900   text-white placeholder-white outline-none focus:border-purple-800 focus:shadow-[0_0_0_1px_rgba(139,92,246,0.4)] transition' placeholder='department' value={form.department} onChange={e => setform({ ...form, department: e.target.value })} />
@@ -165,6 +169,7 @@ const AdminDashboard = () => {
                 <option value="security">security</option>
               </select>
             </div>
+            {error && <p className='text-red-500 text-center font-bold bg-red-100/10 p-2 rounded'>{error}</p>}
             <div className="mt-4">
               <button className='mt-4 w-full p-5 py-3 rounded-xl border-none bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-[0_12px_30px_rgba(139,92,246,0.6)] hover:scale-[1.03] hover:shadow-[0_18px_45px_rgba(139,92,246,0.8)] transition-all'>Create Staff</button>
             </div>
