@@ -182,15 +182,15 @@ const AdminDashboard = () => {
               <LoadingComponent />
             ) : staff && staff.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
-                {staff.map(staff => (
-                  <div key={staff._id} className='border border-gray-600 rounded-2xl p-6 flex flex-col items-center gap-4 bg-gray-800'>
+                {staff.map(staffItem => (
+                  <div key={staffItem._id} className='border border-gray-600 rounded-2xl p-6 flex flex-col items-center gap-4 bg-gray-800'>
                     <div>
                       <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-2xl shadow-lg">
-                        {staff.name && staff.name[0] ? staff.name[0].toUpperCase() : ''}
+                        {staffItem.name && staffItem.name[0] ? staffItem.name[0].toUpperCase() : ''}
                       </div>
                     </div>
                     <div className='flex-col flex items-center gap-2 text-center w-full'>
-                      {editStaff === staff._id ? (
+                      {editStaff === staffItem._id ? (
                         <>
                           <input value={editStafform.name} onChange={e => setEditStafform({ ...editStafform, name: e.target.value })} className='w-full text-center px-3 py-2 rounded-lg bg-gray-800 text-white' />
                           <input value={editStafform.email} onChange={e => setEditStafform({ ...editStafform, email: e.target.value })} className='w-full text-center px-3 py-2 rounded-lg bg-gray-800 text-white mt-2' />
@@ -209,29 +209,32 @@ const AdminDashboard = () => {
                             </div>
                           </div>
                           <div className='mt-4 w-full flex flex-col gap-2'>
-                            <button onClick={() => updateEmployee(staff._id)} className='w-full bg-green-600 hover:bg-green-800 p-3 rounded-xl text-white'>Update</button>
-                            <button onClick={() => setEditStaff(null)} className='w-full bg-red-600 hover:bg-red-800 p-3 rounded-xl text-white'>Cancel</button>
+                            <button onClick={() => updateEmployee(staffItem._id)} className='w-full bg-green-600 hover:bg-green-800 p-3 rounded-xl text-white'>Update</button>
+                            <button onClick={() => toggleSwitch(staffItem._id)} className={`w-full font-bold cursor-pointer p-3 rounded-xl ${staffItem.isActive ? 'bg-red-600 hover:bg-red-800' : 'bg-green-600 hover:bg-green-800'} text-white transition`}>
+                              {staffItem.isActive ? 'Disable Access' : 'Enable Access'}
+                            </button>
+                            <button onClick={() => setEditStaff(null)} className='w-full bg-gray-600 hover:bg-gray-700 p-3 rounded-xl text-white'>Cancel</button>
                           </div>
                         </>
                       ) : (
                         <>
                           <div className="font-bold text-xl">
-                            <h3 className='text-gray-100'>{staff.name}</h3>
+                            <h3 className='text-gray-100'>{staffItem.name}</h3>
                           </div>
                           <div className='text-gray-400 text-sm'>
-                            <p>{staff.email}</p>
+                            <p>{staffItem.email}</p>
                           </div>
                           <div className='grid grid-cols-2 gap-4 mt-4 text-gray-300 text-sm'>
                             <p >Role :</p>
-                            <p>{staff.role}</p>
+                            <p>{staffItem.role}</p>
                             <p>Department :</p>
-                            <p>{staff.department || "N/A"}</p>
+                            <p>{staffItem.department || "N/A"}</p>
                           </div>
                           <div className='mt-4'>
-                            <button onClick={() => toggleSwitch(staff._id)} className={`w-full bg-green-500 font-bold hover:bg-green-700 cursor-pointer p-3 rounded-xl ${staff && staff.isActive ? 'bg-red-600 hover:bg-red-800' : 'bg-green-600 hover:bg-green-800'} text-white transition`}>
-                              {staff && staff.isActive ? 'Disable Access' : 'Enable Access'}
+                            <button onClick={() => toggleSwitch(staffItem._id)} className={`w-full bg-green-500 font-bold hover:bg-green-700 cursor-pointer p-3 rounded-xl ${staffItem.isActive ? 'bg-red-600 hover:bg-red-800' : 'bg-green-600 hover:bg-green-800'} text-white transition`}>
+                              {staffItem.isActive ? 'Disable Access' : 'Enable Access'}
                             </button>
-                            <button onClick={() => editingStaff(staff)} className="w-full mt-2 bg-blue-600 hover:bg-blue-800 p-3 rounded-xl text-white">Edit Employee</button>
+                            <button onClick={() => editingStaff(staffItem)} className="w-full mt-2 bg-blue-600 hover:bg-blue-800 p-3 rounded-xl text-white">Edit Employee</button>
                           </div>
                         </>
                       )}
