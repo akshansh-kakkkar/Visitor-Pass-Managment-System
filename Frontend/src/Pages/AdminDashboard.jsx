@@ -194,6 +194,7 @@ const AdminDashboard = () => {
                         <>
                           <input value={editStafform.name} onChange={e => setEditStafform({ ...editStafform, name: e.target.value })} className='w-full text-center px-3 py-2 rounded-lg bg-gray-800 text-white' />
                           <input value={editStafform.email} onChange={e => setEditStafform({ ...editStafform, email: e.target.value })} className='w-full text-center px-3 py-2 rounded-lg bg-gray-800 text-white mt-2' />
+                          <input value={editStafform.phone} onChange={e => setEditStafform({ ...editStafform, phone: e.target.value })} placeholder="Phone" className='w-full text-center px-3 py-2 rounded-lg bg-gray-800 text-white mt-2' />
                           <div className='grid grid-cols-2 gap-4 mt-3'>
                             <div>
                               <p className='text-sm text-gray-300'>Role</p>
@@ -225,6 +226,8 @@ const AdminDashboard = () => {
                             <p>{staffItem.email}</p>
                           </div>
                           <div className='grid grid-cols-2 gap-4 mt-4 text-gray-300 text-sm'>
+                            <p>Phone :</p>
+                            <p>{staffItem.phone}</p>
                             <p >Role :</p>
                             <p>{staffItem.role}</p>
                             <p>Department :</p>
@@ -279,6 +282,7 @@ const AdminDashboard = () => {
                           </div>
                           <div className='text-gray-400 text-sm'>
                             <p>{checkVisitor.email}</p>
+                            <p>{checkVisitor.phone}</p>
                           </div>
                           <div className='mt-4'>
                             <button onClick={() => editingVisitor(checkVisitor)} className="w-full mt-2 bg-blue-600 hover:bg-blue-800 p-3 rounded-xl text-white">Edit Visitor</button>

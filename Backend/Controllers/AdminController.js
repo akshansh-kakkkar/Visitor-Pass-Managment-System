@@ -86,7 +86,7 @@ export const getAllEmployees = async (req, res) => {
     try {
         const employees = await User.find({
             role: { $in: ['employee', 'security'] }
-        }).select('name email role department isActive _id');
+        }).select('name email role phone department isActive _id');
         res.status(200).json(employees);
     } catch (error) {
         res.status(500).json({
@@ -127,7 +127,7 @@ export const EditStaff = async (req, res) => {
             return res.status(400).json({ message: 'Missing employee id' });
         }
 
-        const updatedEmployee = await User.findByIdAndUpdate(id, updates, { new: true });
+        const updatedEmployee = await User.findByIdAndUpdate(id, updates, { new: true, runValidators: true });
 
         if (!updatedEmployee) {
             return res.status(404).json({
@@ -152,7 +152,7 @@ export const EditStaff = async (req, res) => {
 export const updateVisitor = async (req, res) => {
     try {
         const { id, name, email } = req.body;
-        
+
         if (!id) {
             return res.status(400).json({
                 message: "Visitor ID is required"
